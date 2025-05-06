@@ -49,16 +49,27 @@ public:
         GENERATOR_2_KW,
         GAME_SIM_SPEED,
         RODS_POS_ACTUAL,
-        ROD_BANK_POS_0_ORDERED,
+        STEAM_TURBINE_0_PRESSURE,
+        STEAM_TURBINE_1_PRESSURE,
+        STEAM_TURBINE_2_PRESSURE,
+        STEAM_TURBINE_0_TEMPERATURE,
+        STEAM_TURBINE_1_TEMPERATURE,
+        STEAM_TURBINE_2_TEMPERATURE
     };
 
 private:
     Ui::MainWindow *_ui;
     QNetworkAccessManager *_netManager = nullptr;
     QTimer *_timer = nullptr;
+
     PIDController _energyPID = PIDController(0 ,0 ,0 , 0.5), _rodPID = PIDController(0, 0, 0, 0.1);
+
     QVector<PIDController> _steamPID = {PIDController(0,0,0,0.5), PIDController(0,0,0,0.5), PIDController(0,0,0,0.5)};
-    QVector<int> _steamOutlet = {0,0,0}, _coolantVolume = {0,0,0}, _secCoolFlow = {0,0,0};
+    QVector<double> _steamOutlet = {0,0,0}, _coolantVolume = {0,0,0}, _secCoolFlow = {0,0,0};
+
+    QVector<PIDController> _pressurePID = {PIDController(), PIDController(), PIDController()};
+    QVector<double> _pressure = {0.0,0.0,0.0}, _pressureTemp = {0.0,0.0,0.0}, _pressureValve = {0.0,0.0,0.0};
+
     double _requiredPower = 0, _generatedPower = 0;
     double _rodsActual = 0;
     double _coreTemp = 0;
@@ -70,8 +81,11 @@ private:
     void OrderRods();
     void OrderCorePump();
     void OrderSteamFlow(int number);
+    void OrderPressure(int number);
     void SetSteamButtonRed(int number);
     void SetSteamButtonGreen(int number);
+    void SetPressureButtonRed(int number);
+    void SetPressureButtonGreen(int number);
     void SetPowerGenButtonRed();
     void SetPowerGenButtonGreen();
     void SetCoreTemperatureButtonRed();
@@ -101,12 +115,17 @@ private slots:
     void On_spinEnergyKp_editingFinished();
     void On_spinEnergyKi_editingFinished();
     void On_spinEnergyKd_editingFinished();
+    void On_spinPressureKp_editingFinihed();
+    void On_spinPressureKi_editingFinihed();
+    void On_spinPressureKd_editingFinihed();
     void On_spinIntegralMaximumGen_editingFinished();
     void On_spinIntegralMaximumCorePump_editingFinished();
     void On_spinIntegralMaximumRods_editingFinished();
+    void On_spinPressureMaxIntegral_editingFinished();
     void On_checkEnableSteam_checkStatusChanged(Qt::CheckState state);
     void On_checkEnableEnergyPID_checkStatusChanged(Qt::CheckState state);
     void On_checkEnableRodControl_checkStatusChanged(Qt::CheckState state);
+    void On_checkEnablePressureController_checkedStatusChanged(Qt::CheckState state);
 
 signals:
     void TimerStart(int msec);

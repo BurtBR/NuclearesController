@@ -31,7 +31,12 @@ const QMap<QString, MainWindow::NuclearVariable> MainWindow::_variablesNames = {
     {"GENERATOR_2_KW", GENERATOR_2_KW},
     {"GAME_SIM_SPEED", GAME_SIM_SPEED},
     {"RODS_POS_ACTUAL", RODS_POS_ACTUAL},
-    {"ROD_BANK_POS_0_ORDERED", ROD_BANK_POS_0_ORDERED}
+    {"STEAM_TURBINE_0_PRESSURE", STEAM_TURBINE_0_PRESSURE},
+    {"STEAM_TURBINE_1_PRESSURE", STEAM_TURBINE_1_PRESSURE},
+    {"STEAM_TURBINE_2_PRESSURE", STEAM_TURBINE_2_PRESSURE},
+    {"STEAM_TURBINE_0_TEMPERATURE", STEAM_TURBINE_0_TEMPERATURE},
+    {"STEAM_TURBINE_1_TEMPERATURE", STEAM_TURBINE_1_TEMPERATURE},
+    {"STEAM_TURBINE_2_TEMPERATURE", STEAM_TURBINE_2_TEMPERATURE}
 };
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainWindow){
@@ -50,30 +55,44 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
     connect(_ui->spinRodKp, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinRodKp_editingFinished);
     connect(_ui->spinRodKi, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinRodKi_editingFinished);
     connect(_ui->spinRodKd, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinRodKd_editingFinished);
+    connect(_ui->spinIntegralMaximumRods, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinIntegralMaximumRods_editingFinished);
     On_spinRodKp_editingFinished();
     On_spinRodKi_editingFinished();
     On_spinRodKd_editingFinished();
+    On_spinIntegralMaximumRods_editingFinished();
+
 
     connect(_ui->spinSteamKd, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinSteamKd_editingFinished);
     connect(_ui->spinSteamKi, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinSteamKi_editingFinished);
     connect(_ui->spinSteamKp, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinSteamKp_editingFinished);
+    connect(_ui->spinIntegralMaximumGen, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinIntegralMaximumGen_editingFinished);
     On_spinSteamKp_editingFinished();
     On_spinSteamKi_editingFinished();
     On_spinSteamKd_editingFinished();
+    On_spinIntegralMaximumGen_editingFinished();
 
     connect(_ui->spinEnergyKp, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinEnergyKp_editingFinished);
     connect(_ui->spinEnergyKi, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinEnergyKi_editingFinished);
     connect(_ui->spinEnergyKd, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinEnergyKd_editingFinished);
+    connect(_ui->spinIntegralMaximumCorePump, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinIntegralMaximumCorePump_editingFinished);
     On_spinEnergyKp_editingFinished();
     On_spinEnergyKi_editingFinished();
     On_spinEnergyKd_editingFinished();
-
-    connect(_ui->spinIntegralMaximumCorePump, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinIntegralMaximumCorePump_editingFinished);
-    connect(_ui->spinIntegralMaximumGen, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinIntegralMaximumGen_editingFinished);
-    connect(_ui->spinIntegralMaximumRods, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinIntegralMaximumRods_editingFinished);
-    On_spinIntegralMaximumGen_editingFinished();
     On_spinIntegralMaximumCorePump_editingFinished();
-    On_spinIntegralMaximumRods_editingFinished();
+
+
+    connect(_ui->spinPressureKp, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinPressureKp_editingFinihed);
+    connect(_ui->spinPressureKi, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinPressureKi_editingFinihed);
+    connect(_ui->spinPressureKd, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinPressureKd_editingFinihed);
+    connect(_ui->spinPressureMaxIntegral, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinPressureMaxIntegral_editingFinished);
+    On_spinPressureKp_editingFinihed();
+    On_spinPressureKi_editingFinihed();
+    On_spinPressureKd_editingFinihed();
+    On_spinPressureMaxIntegral_editingFinished();
+
+    // NOT YET IMPLEMENTED BY THE NUCLEARES DEV TO WEBSERVER
+    // PRESSURE CONTROL
+    _ui->tabWidget->removeTab(2);
 }
 
 MainWindow::~MainWindow(){
@@ -207,16 +226,20 @@ void MainWindow::OrderSteamFlow(int number){
     }
 }
 
+void MainWindow::OrderPressure(int number){
+
+}
+
 void MainWindow::SetSteamButtonRed(int number){
     switch(number){
     case 0:
-        _ui->widget_status_L1->setStyleSheet("background-color: rgb(255, 100, 100);border-radius: 14%;");
+        _ui->widget_status_L1->setStyleSheet("background-color: rgb(255, 100, 100)");
         break;
     case 1:
-        _ui->widget_status_L2->setStyleSheet("background-color: rgb(255, 100, 100);border-radius: 14%;");
+        _ui->widget_status_L2->setStyleSheet("background-color: rgb(255, 100, 100)");
         break;
     case 2:
-        _ui->widget_status_L3->setStyleSheet("background-color: rgb(255, 100, 100);border-radius: 14%;");
+        _ui->widget_status_L3->setStyleSheet("background-color: rgb(255, 100, 100)");
         break;
     default:
         break;
@@ -226,13 +249,45 @@ void MainWindow::SetSteamButtonRed(int number){
 void MainWindow::SetSteamButtonGreen(int number){
     switch(number){
     case 0:
-        _ui->widget_status_L1->setStyleSheet("background-color: rgb(100, 255, 100);border-radius: 14%;");
+        _ui->widget_status_L1->setStyleSheet("background-color: rgb(100, 255, 100)");
         break;
     case 1:
-        _ui->widget_status_L2->setStyleSheet("background-color: rgb(100, 255, 100);border-radius: 14%;");
+        _ui->widget_status_L2->setStyleSheet("background-color: rgb(100, 255, 100)");
         break;
     case 2:
-        _ui->widget_status_L3->setStyleSheet("background-color: rgb(100, 255, 100);border-radius: 14%;");
+        _ui->widget_status_L3->setStyleSheet("background-color: rgb(100, 255, 100)");
+        break;
+    default:
+        break;
+    }
+}
+
+void MainWindow::SetPressureButtonRed(int number){
+    switch(number){
+    case 0:
+        _ui->widget_status_Pressure_L1->setStyleSheet("background-color: rgb(255, 100, 100)");
+        break;
+    case 1:
+        _ui->widget_status_Pressure_L2->setStyleSheet("background-color: rgb(255, 100, 100)");
+        break;
+    case 2:
+        _ui->widget_status_Pressure_L3->setStyleSheet("background-color: rgb(255, 100, 100)");
+        break;
+    default:
+        break;
+    }
+}
+
+void MainWindow::SetPressureButtonGreen(int number){
+    switch(number){
+    case 0:
+        _ui->widget_status_Pressure_L1->setStyleSheet("background-color: rgb(100, 255, 100)");
+        break;
+    case 1:
+        _ui->widget_status_Pressure_L2->setStyleSheet("background-color: rgb(100, 255, 100)");
+        break;
+    case 2:
+        _ui->widget_status_Pressure_L3->setStyleSheet("background-color: rgb(100, 255, 100)");
         break;
     default:
         break;
@@ -240,19 +295,19 @@ void MainWindow::SetSteamButtonGreen(int number){
 }
 
 void MainWindow::SetPowerGenButtonRed(){
-    _ui->widget_status_powerGen->setStyleSheet("background-color: rgb(255, 100, 100);border-radius: 14%;");
+    _ui->widget_status_powerGen->setStyleSheet("background-color: rgb(255, 100, 100)");
 }
 
 void MainWindow::SetPowerGenButtonGreen(){
-    _ui->widget_status_powerGen->setStyleSheet("background-color: rgb(100, 255, 100);border-radius: 14%;");
+    _ui->widget_status_powerGen->setStyleSheet("background-color: rgb(100, 255, 100)");
 }
 
 void MainWindow::SetCoreTemperatureButtonRed(){
-    _ui->widgetStatusCoreTemp->setStyleSheet("background-color: rgb(255, 100, 100);border-radius: 14%;");
+    _ui->widgetStatusCoreTemp->setStyleSheet("background-color: rgb(255, 100, 100)");
 }
 
 void MainWindow::SetCoreTemperatureButtonGreen(){
-    _ui->widgetStatusCoreTemp->setStyleSheet("background-color: rgb(100, 255, 100);border-radius: 14%;");
+    _ui->widgetStatusCoreTemp->setStyleSheet("background-color: rgb(100, 255, 100)");
 }
 
 void MainWindow::StartController(){
@@ -276,13 +331,16 @@ void MainWindow::StartController(){
 }
 
 void MainWindow::StopController(){
-    _ui->buttonStart->setText("Start");
-    ConsoleMessage("Controller stopped");
     emit TimerStop();
     disconnect(_netManager, &QNetworkAccessManager::finished, this, &MainWindow::ReplyReceived);
+    _ui->buttonStart->setText("Start");
+    ConsoleMessage("Controller stopped");
     _steamPID[0].Reset();
     _steamPID[1].Reset();
     _steamPID[2].Reset();
+    _pressurePID[0].Reset();
+    _pressurePID[1].Reset();
+    _pressurePID[2].Reset();
     _energyPID.Reset();
     _rodPID.Reset();
     SetSteamButtonRed(0);
@@ -290,6 +348,9 @@ void MainWindow::StopController(){
     SetSteamButtonRed(2);
     SetPowerGenButtonRed();
     SetCoreTemperatureButtonRed();
+    SetPressureButtonRed(0);
+    SetPressureButtonRed(1);
+    SetPressureButtonRed(2);
 }
 
 void MainWindow::ControlPlant(){
@@ -305,6 +366,10 @@ void MainWindow::ControlPlant(){
 
     if(_ui->checkEnableRodControl->isChecked()){
         GetRequest("CORE_TEMP");
+    }
+
+    if(_ui->checkEnablePressureController->isChecked()){
+        GetRequest("");
     }
 }
 
@@ -371,6 +436,24 @@ void MainWindow::On_spinSteamKd_editingFinished(){
     _steamPID[2].SetKd(value);
 }
 
+void MainWindow::On_spinPressureKp_editingFinihed(){
+    _pressurePID[0].SetKp(_ui->spinPressureKp->value());
+    _pressurePID[1].SetKp(_ui->spinPressureKp->value());
+    _pressurePID[2].SetKp(_ui->spinPressureKp->value());
+}
+
+void MainWindow::On_spinPressureKi_editingFinihed(){
+    _pressurePID[0].SetKi(_ui->spinPressureKi->value());
+    _pressurePID[1].SetKi(_ui->spinPressureKi->value());
+    _pressurePID[2].SetKi(_ui->spinPressureKi->value());
+}
+
+void MainWindow::On_spinPressureKd_editingFinihed(){
+    _pressurePID[0].SetKd(_ui->spinPressureKd->value());
+    _pressurePID[1].SetKd(_ui->spinPressureKd->value());
+    _pressurePID[2].SetKd(_ui->spinPressureKd->value());
+}
+
 void MainWindow::On_spinEnergyKp_editingFinished(){
     _energyPID.SetKp(_ui->spinEnergyKp->value());
 }
@@ -398,6 +481,12 @@ void MainWindow::On_spinIntegralMaximumRods_editingFinished(){
     _rodPID.SetIntegralLimit(_ui->spinIntegralMaximumRods->value());
 }
 
+void MainWindow::On_spinPressureMaxIntegral_editingFinished(){
+    _pressurePID[0].SetIntegralLimit(_ui->spinPressureMaxIntegral->value());
+    _pressurePID[1].SetIntegralLimit(_ui->spinPressureMaxIntegral->value());
+    _pressurePID[2].SetIntegralLimit(_ui->spinPressureMaxIntegral->value());
+}
+
 void MainWindow::On_checkEnableSteam_checkStatusChanged(Qt::CheckState state){
     if(!state){
         SetSteamButtonRed(0);
@@ -415,6 +504,14 @@ void MainWindow::On_checkEnableEnergyPID_checkStatusChanged(Qt::CheckState state
 void MainWindow::On_checkEnableRodControl_checkStatusChanged(Qt::CheckState state){
     if(!state){
         SetCoreTemperatureButtonRed();
+    }
+}
+
+void MainWindow::On_checkEnablePressureController_checkedStatusChanged(Qt::CheckState state){
+    if(!state){
+        SetPressureButtonRed(0);
+        SetPressureButtonRed(1);
+        SetPressureButtonRed(2);
     }
 }
 
@@ -495,8 +592,6 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
         _rodsActual = reply->readAll().toDouble();
         _ui->lcdRodPosition->display(_rodsActual);
         OrderRods();
-        break;
-    case NuclearVariable::ROD_BANK_POS_0_ORDERED:
         break;
 
     case NuclearVariable::CORE_STATE_CRITICALITY:

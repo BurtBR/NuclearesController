@@ -177,7 +177,7 @@ color: white;</string>
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="tabOptions">
        <attribute name="title">
@@ -662,30 +662,6 @@ color: white;</string>
             </layout>
            </widget>
           </item>
-          <item row="8" column="3">
-           <layout class="QVBoxLayout" name="verticalLayout_43">
-            <item>
-             <widget class="QWidget" name="widget_status_L3" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>29</width>
-                <height>29</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 100, 100);
-border-radius: 14%;</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item row="8" column="1">
            <widget class="QWidget" name="widget_I_L3Steam" native="true">
             <layout class="QVBoxLayout" name="verticalLayout_34">
@@ -723,30 +699,6 @@ color: white;</string>
             </layout>
            </widget>
           </item>
-          <item row="5" column="3">
-           <layout class="QVBoxLayout" name="verticalLayout_13">
-            <item>
-             <widget class="QWidget" name="widget_status_L2" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>29</width>
-                <height>29</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 100, 100);
-border-radius: 14%;</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item row="0" column="4">
            <spacer name="verticalSpacer_12">
             <property name="orientation">
@@ -759,30 +711,6 @@ border-radius: 14%;</string>
              </size>
             </property>
            </spacer>
-          </item>
-          <item row="2" column="3">
-           <layout class="QVBoxLayout" name="verticalLayout_33">
-            <item>
-             <widget class="QWidget" name="widget_status_L1" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>29</width>
-                <height>29</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 100, 100);
-border-radius: 14%;</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </item>
           <item row="2" column="1">
            <widget class="QWidget" name="widget_I_L1Steam" native="true">
@@ -1268,6 +1196,63 @@ color: white;</string>
             </property>
            </widget>
           </item>
+          <item row="8" column="3">
+           <widget class="QWidget" name="widget_status_L3" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>10</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 100, 100);</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="3">
+           <widget class="QWidget" name="widget_status_L2" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>10</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 100, 100);</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QWidget" name="widget_status_L1" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>10</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 100, 100);</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
@@ -1306,7 +1291,7 @@ color: white;</string>
           <item>
            <widget class="QLabel" name="label_16">
             <property name="text">
-             <string>Steam Generator Kp:</string>
+             <string>Kp:</string>
             </property>
            </widget>
           </item>
@@ -1332,7 +1317,7 @@ color: white;</string>
           <item>
            <widget class="QLabel" name="label_17">
             <property name="text">
-             <string>Steam Generator Ki:</string>
+             <string>Ki:</string>
             </property>
            </widget>
           </item>
@@ -1355,7 +1340,7 @@ color: white;</string>
           <item>
            <widget class="QLabel" name="label_18">
             <property name="text">
-             <string>Steam Generator Kd:</string>
+             <string>Kd:</string>
             </property>
            </widget>
           </item>
@@ -1392,7 +1377,7 @@ color: white;</string>
           <item>
            <widget class="QLabel" name="label_13">
             <property name="text">
-             <string>Steam Generator Volume Target:</string>
+             <string>Volume Target:</string>
             </property>
            </widget>
           </item>
@@ -1424,6 +1409,1087 @@ color: white;</string>
           </item>
           <item>
            <spacer name="verticalSpacer_14">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabSteamPressure">
+       <attribute name="title">
+        <string>Steam Pressure</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="9" column="1">
+           <widget class="QWidget" name="widget_16" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(20, 20, 20, 100);
+}
+
+QLCDNumber{
+	background: rgba(200,200,200,100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLabel{
+	background: transparent;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_47">
+             <item>
+              <widget class="QLabel" name="label_50">
+               <property name="text">
+                <string>Loop 3 Temperature</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L3_Pres_Temp"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QWidget" name="widget_11" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(200,200,200,100);
+}
+
+QLabel{
+	background: transparent;
+	font: 700 20pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLCDNumber{
+	background: rgba(50, 50, 50, 100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_51">
+             <item>
+              <widget class="QLabel" name="label_63">
+               <property name="text">
+                <string>P</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L1_Pres_P"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="10" column="2">
+           <widget class="QWidget" name="widget_24" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(200,200,200,100);
+}
+
+QLabel{
+	background: transparent;
+	font: 700 20pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLCDNumber{
+	background: rgba(50, 50, 50, 100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_58">
+             <item>
+              <widget class="QLabel" name="label_70">
+               <property name="text">
+                <string>D</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L3_Pres_D"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QWidget" name="widget_8" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(20, 20, 20, 100);
+}
+
+QLCDNumber{
+	background: rgba(200,200,200,100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLabel{
+	background: transparent;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <item>
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>Loop 1 Pressure</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L1_Pres_Pres"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="Line" name="line_7">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QWidget" name="widget_26" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(20, 20, 20, 100);
+}
+
+QLCDNumber{
+	background: rgba(200,200,200,100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLabel{
+	background: transparent;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_11">
+             <item>
+              <widget class="QLabel" name="label_12">
+               <property name="text">
+                <string>Loop 1 Valve</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L1_Pres_Valve"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QWidget" name="widget_9" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(20, 20, 20, 100);
+}
+
+QLCDNumber{
+	background: rgba(200,200,200,100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLabel{
+	background: transparent;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_14">
+             <item>
+              <widget class="QLabel" name="label_27">
+               <property name="text">
+                <string>Loop 1 Temperature</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L1_Pres_Temp"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="9" column="2">
+           <widget class="QWidget" name="widget_20" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(20, 20, 20, 100);
+}
+
+QLCDNumber{
+	background: rgba(200,200,200,100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLabel{
+	background: transparent;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_49">
+             <item>
+              <widget class="QLabel" name="label_61">
+               <property name="text">
+                <string>Loop 3 Valve</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L3_Pres_Valve"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QWidget" name="widget_17" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(200,200,200,100);
+}
+
+QLabel{
+	background: transparent;
+	font: 700 20pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLCDNumber{
+	background: rgba(50, 50, 50, 100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_54">
+             <item>
+              <widget class="QLabel" name="label_66">
+               <property name="text">
+                <string>I</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L2_Pres_I"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="Line" name="line_9">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="Line" name="line_10">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1">
+           <widget class="Line" name="line_11">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="2">
+           <widget class="Line" name="line_12">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="Line" name="line_8">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QWidget" name="widget_22" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(20, 20, 20, 100);
+}
+
+QLCDNumber{
+	background: rgba(200,200,200,100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLabel{
+	background: transparent;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_50">
+             <item>
+              <widget class="QLabel" name="label_62">
+               <property name="text">
+                <string>Loop 2 Pressure</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L2_Pres_Pres"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QWidget" name="widget_25" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(200,200,200,100);
+}
+
+QLabel{
+	background: transparent;
+	font: 700 20pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLCDNumber{
+	background: rgba(50, 50, 50, 100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_59">
+             <item>
+              <widget class="QLabel" name="label_71">
+               <property name="text">
+                <string>I</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L1_Pres_I"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="2" column="4">
+           <spacer name="verticalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="2" column="2">
+           <widget class="QWidget" name="widget_14" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(200,200,200,100);
+}
+
+QLabel{
+	background: transparent;
+	font: 700 20pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLCDNumber{
+	background: rgba(50, 50, 50, 100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_52">
+             <item>
+              <widget class="QLabel" name="label_64">
+               <property name="text">
+                <string>D</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L1_Pres_D"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="7" column="2">
+           <widget class="QWidget" name="widget_18" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(200,200,200,100);
+}
+
+QLabel{
+	background: transparent;
+	font: 700 20pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLCDNumber{
+	background: rgba(50, 50, 50, 100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_55">
+             <item>
+              <widget class="QLabel" name="label_67">
+               <property name="text">
+                <string>D</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L2_Pres_D"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="10" column="0">
+           <widget class="QWidget" name="widget_19" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(200,200,200,100);
+}
+
+QLabel{
+	background: transparent;
+	font: 700 20pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLCDNumber{
+	background: rgba(50, 50, 50, 100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_56">
+             <item>
+              <widget class="QLabel" name="label_68">
+               <property name="text">
+                <string>P</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L3_Pres_P"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QWidget" name="widget_10" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(20, 20, 20, 100);
+}
+
+QLCDNumber{
+	background: rgba(200,200,200,100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLabel{
+	background: transparent;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_45">
+             <item>
+              <widget class="QLabel" name="label_42">
+               <property name="text">
+                <string>Loop 2 Temperature</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L2_Pres_Temp"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QWidget" name="widget_13" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(200,200,200,100);
+}
+
+QLabel{
+	background: transparent;
+	font: 700 20pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLCDNumber{
+	background: rgba(50, 50, 50, 100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_53">
+             <item>
+              <widget class="QLabel" name="label_65">
+               <property name="text">
+                <string>P</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L2_Pres_P"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QWidget" name="widget_15" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(20, 20, 20, 100);
+}
+
+QLCDNumber{
+	background: rgba(200,200,200,100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLabel{
+	background: transparent;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_46">
+             <item>
+              <widget class="QLabel" name="label_49">
+               <property name="text">
+                <string>Loop 2 Valve</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L2_Pres_Valve"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="10" column="1">
+           <widget class="QWidget" name="widget_23" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(200,200,200,100);
+}
+
+QLabel{
+	background: transparent;
+	font: 700 20pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLCDNumber{
+	background: rgba(50, 50, 50, 100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_57">
+             <item>
+              <widget class="QLabel" name="label_69">
+               <property name="text">
+                <string>I</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L3_Pres_I"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="9" column="0">
+           <widget class="QWidget" name="widget_21" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QWidget{
+	background: rgba(20, 20, 20, 100);
+}
+
+QLCDNumber{
+	background: rgba(200,200,200,100);
+	font: 15pt &quot;Source Code Pro&quot;;
+	color: white;
+}
+
+QLabel{
+	background: transparent;
+}</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_48">
+             <item>
+              <widget class="QLabel" name="label_51">
+               <property name="text">
+                <string>Loop 3 Pressure</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcd_L3_Pres_Pres"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="5" column="4">
+           <spacer name="verticalSpacer_8">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="7" column="4">
+           <spacer name="verticalSpacer_9">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="9" column="4">
+           <spacer name="verticalSpacer_13">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="10" column="4">
+           <spacer name="verticalSpacer_16">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="4">
+           <spacer name="verticalSpacer_17">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="7" column="3">
+           <widget class="QWidget" name="widget_status_Pressure_L2" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>10</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 100, 100);</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QWidget" name="widget_status_Pressure_L1" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>10</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 100, 100);</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="3">
+           <widget class="QWidget" name="widget_status_Pressure_L3" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>10</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 100, 100);</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Valve Minimum:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinPressureValveMin">
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>4</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_72">
+            <property name="text">
+             <string>Valve Maximum:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinPressureValveMax">
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_73">
+            <property name="text">
+             <string>Kp:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinPressureKp">
+            <property name="decimals">
+             <number>6</number>
+            </property>
+            <property name="minimum">
+             <double>-10.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>10.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.100000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_74">
+            <property name="text">
+             <string>Ki:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinPressureKi">
+            <property name="decimals">
+             <number>6</number>
+            </property>
+            <property name="minimum">
+             <double>-10.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>10.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_75">
+            <property name="text">
+             <string>Kd:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinPressureKd">
+            <property name="decimals">
+             <number>6</number>
+            </property>
+            <property name="minimum">
+             <double>-10.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>10.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_76">
+            <property name="text">
+             <string>Integral Maximum:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinPressureMaxIntegral">
+            <property name="maximum">
+             <double>100.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>1.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_77">
+            <property name="text">
+             <string>Pressure Target:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinPressureTarget">
+            <property name="maximum">
+             <double>120.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>60.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkEnablePressureController">
+            <property name="text">
+             <string>Enable Pressure Controller</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
             <property name="orientation">
              <enum>Qt::Orientation::Vertical</enum>
             </property>
@@ -1646,38 +2712,32 @@ color: white;</string>
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_20">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QWidget" name="widget_status_powerGen" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>29</width>
-                <height>29</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>29</width>
-                <height>29</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 100, 100);
-border-radius: 14%;</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
+         <widget class="QWidget" name="widget_status_powerGen" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>10</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(255, 100, 100);</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_20"/>
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_16">
@@ -1694,7 +2754,7 @@ border-radius: 14%;</string>
              <number>100</number>
             </property>
             <property name="value">
-             <number>8</number>
+             <number>10</number>
             </property>
            </widget>
           </item>
@@ -1718,7 +2778,7 @@ border-radius: 14%;</string>
           <item>
            <widget class="QLabel" name="label_19">
             <property name="text">
-             <string>Core Pump Kp:</string>
+             <string>Kp:</string>
             </property>
            </widget>
           </item>
@@ -1744,7 +2804,7 @@ border-radius: 14%;</string>
           <item>
            <widget class="QLabel" name="label_20">
             <property name="text">
-             <string>Core Pump Ki:</string>
+             <string>Ki:</string>
             </property>
            </widget>
           </item>
@@ -1770,7 +2830,7 @@ border-radius: 14%;</string>
           <item>
            <widget class="QLabel" name="label_21">
             <property name="text">
-             <string>Core Pump Kd:</string>
+             <string>Kd:</string>
             </property>
            </widget>
           </item>
@@ -2039,19 +3099,18 @@ color: white;</string>
              <widget class="QWidget" name="widgetStatusCoreTemp" native="true">
               <property name="minimumSize">
                <size>
-                <width>29</width>
-                <height>29</height>
+                <width>10</width>
+                <height>0</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>29</width>
-                <height>29</height>
+                <width>16777215</width>
+                <height>16777215</height>
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 100, 100);
-border-radius: 14%;</string>
+               <string notr="true">background-color: rgb(255, 100, 100);</string>
               </property>
              </widget>
             </item>
@@ -2098,7 +3157,7 @@ border-radius: 14%;</string>
           <item>
            <widget class="QLabel" name="label_28">
             <property name="text">
-             <string>Core Rods Kp:</string>
+             <string>Kp:</string>
             </property>
            </widget>
           </item>
@@ -2121,7 +3180,7 @@ border-radius: 14%;</string>
           <item>
            <widget class="QLabel" name="label_29">
             <property name="text">
-             <string>Core Rods Ki:</string>
+             <string>Ki:</string>
             </property>
            </widget>
           </item>
@@ -2144,7 +3203,7 @@ border-radius: 14%;</string>
           <item>
            <widget class="QLabel" name="label_30">
             <property name="text">
-             <string>Core Rods Kd:</string>
+             <string>Kd:</string>
             </property>
            </widget>
           </item>
@@ -2160,7 +3219,7 @@ border-radius: 14%;</string>
              <double>100.000000000000000</double>
             </property>
             <property name="value">
-             <double>0.100000000000000</double>
+             <double>2.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -2174,7 +3233,7 @@ border-radius: 14%;</string>
           <item>
            <widget class="QDoubleSpinBox" name="spinIntegralMaximumRods">
             <property name="value">
-             <double>0.500000000000000</double>
+             <double>0.200000000000000</double>
             </property>
            </widget>
           </item>
