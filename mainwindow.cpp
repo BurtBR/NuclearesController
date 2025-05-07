@@ -33,6 +33,8 @@ const QMap<QString, MainWindow::NuclearVariable> MainWindow::_variablesNames = {
     {"GENERATOR_2_KW", GENERATOR_2_KW},
     {"GAME_SIM_SPEED", GAME_SIM_SPEED},
     {"RODS_POS_ACTUAL", RODS_POS_ACTUAL},
+    {"RODS_POS_ORDERED", RODS_POS_ORDERED},
+    {"ROD_BANK_POS_0_ORDERED", ROD_BANK_POS_0_ORDERED},
     {"STEAM_TURBINE_0_PRESSURE", STEAM_TURBINE_0_PRESSURE},
     {"STEAM_TURBINE_1_PRESSURE", STEAM_TURBINE_1_PRESSURE},
     {"STEAM_TURBINE_2_PRESSURE", STEAM_TURBINE_2_PRESSURE},
@@ -413,6 +415,7 @@ void MainWindow::GetRequest(QString variable){
 void MainWindow::CollectionFinished(){
     DeleteThread(&_threadDataCollection);
     _ui->buttonStartDataCollection->setText("Start Data Collection");
+    ConsoleMessage("Data collection finished");
 }
 
 void MainWindow::On_buttonStart_Clicked(){
@@ -455,14 +458,14 @@ void MainWindow::On_buttonStartDataCollection_Clicked(){
         if(_ui->checkCollectRealtime->isChecked())
             worker->AddVariable(MainWindow::NuclearVariable::REALCURRENTTIME);
 
-        //if(_ui->checkCollectCoreTemperature)
-        //    worker->AddVariable(MainWindow::NuclearVariable::CORE_TEMP);
+        if(_ui->checkCollectCoreTemperature)
+            worker->AddVariable(MainWindow::NuclearVariable::CORE_TEMP);
 
-        //if(_ui->checkCollectRodsCommanded)
-            //worker->AddVariable(MainWindow::NuclearVariable::RODS COMMANDED);
+        if(_ui->checkCollectRodsCommanded)
+            worker->AddVariable(MainWindow::NuclearVariable::ROD_BANK_POS_0_ORDERED);
 
-        //if(_ui->checkCollectRodsPosition)
-        //    worker->AddVariable(MainWindow::NuclearVariable::RODS_POS_ACTUAL);
+        if(_ui->checkCollectRodsPosition)
+            worker->AddVariable(MainWindow::NuclearVariable::RODS_POS_ACTUAL);
 
         connect(_threadDataCollection, &QThread::finished, worker, &WorkerDataCollections::deleteLater);
 
@@ -476,6 +479,7 @@ void MainWindow::On_buttonStartDataCollection_Clicked(){
         _threadDataCollection->start();
 
         _ui->buttonStartDataCollection->setText("Stop Data Collection");
+        ConsoleMessage("Data collection started");
         emit StartCollection(_ui->spinCollectionPeriod->value(), _ui->lineCollectionFilename->text(), _ui->lineIP->text());
     }
 }

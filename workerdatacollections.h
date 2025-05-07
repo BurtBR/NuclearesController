@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QElapsedTimer>
 #include <QFile>
 #include <QMap>
 #include <QByteArray>
@@ -14,6 +15,7 @@ class WorkerDataCollections : public QObject{
 private:
     QNetworkAccessManager *_netManager = nullptr;
     QTimer *_timer = nullptr;
+    QElapsedTimer *_elapsedTimer = nullptr;
     QFile *_file = nullptr;
     QMap<MainWindow::NuclearVariable, QByteArray> _collectedVariables;
     QString _ip;

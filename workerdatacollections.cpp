@@ -9,6 +9,10 @@ WorkerDataCollections::~WorkerDataCollections(){
         delete _timer;
         _timer = nullptr;
     }
+    if(_elapsedTimer){
+        delete _elapsedTimer;
+        _elapsedTimer = nullptr;
+    }
     if(_netManager){
         delete _netManager;
         _netManager = nullptr;
@@ -83,10 +87,41 @@ void WorkerDataCollections::StartCollection(int msec, QString filename, QString 
         return;
     }
 
+    if(_collectedVariables.contains(MainWindow::NuclearVariable::REALCURRENTTIME)){
+        try{
+            _elapsedTimer = new QElapsedTimer();
+        }catch(...){
+            if(_timer){
+                delete _timer;
+                _timer = nullptr;
+            }
+            if(_elapsedTimer){
+                delete _elapsedTimer;
+                _elapsedTimer = nullptr;
+            }
+            if(_netManager){
+                delete _netManager;
+                _netManager = nullptr;
+            }
+            if(_file){
+                delete _file;
+                _file = nullptr;
+            }
+            emit Message("Failed to allocate memory for data collection", MainWindow::ConsoleMessageType::Error);
+            emit CollectionFinished();
+            return;
+        }
+        _elapsedTimer->start();
+    }
+
     if(!_file->open(QIODevice::WriteOnly)){
         if(_timer){
             delete _timer;
             _timer = nullptr;
+        }
+        if(_elapsedTimer){
+            delete _elapsedTimer;
+            _elapsedTimer = nullptr;
         }
         if(_netManager){
             delete _netManager;
@@ -134,7 +169,7 @@ bool WorkerDataCollections::WriteData(){
     if(!_file)
         return false;
 
-    if(!_file->open(QIODevice::ReadWrite))
+    if(!_file->open(QIODevice::Append))
         return false;
 
     QTextStream out(_file);
@@ -162,7 +197,12 @@ void WorkerDataCollections::Timeout(){
     QMap<MainWindow::NuclearVariable, QByteArray>::Iterator itr = _collectedVariables.begin();
 
     while(itr != _collectedVariables.end()){
-        GetVariable(itr.key());
+        if(itr.key() != MainWindow::NuclearVariable::REALCURRENTTIME)
+            GetVariable(itr.key());
+        else {
+            _qtyReceived++;
+            _collectedVariables[MainWindow::NuclearVariable::REALCURRENTTIME] = QString::number(_elapsedTimer->elapsed()).toUtf8();
+        }
         itr++;
     }
 }
