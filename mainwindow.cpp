@@ -616,7 +616,7 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
         GetRequest("COOLANT_CORE_FLOW_SPEED");
         break;
     case NuclearVariable::COOLANT_CORE_FLOW_SPEED:
-        _corePump = reply->readAll().toInt();
+        _corePump = reply->readAll().toDouble();
         _ui->lcdGenPower->display(_generatedPower);
         _ui->lcdCorePump->display(_corePump);
         OrderCorePump();

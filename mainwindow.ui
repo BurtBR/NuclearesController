@@ -177,7 +177,7 @@ color: white;</string>
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabOptions">
        <attribute name="title">
@@ -1576,6 +1576,7 @@ QLCDNumber{
 
 QLabel{
 	background: transparent;
+	color: white;
 }</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -1623,6 +1624,7 @@ QLCDNumber{
 
 QLabel{
 	background: transparent;
+	color: white;
 }</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1663,6 +1665,7 @@ QLCDNumber{
 
 QLabel{
 	background: transparent;
+	color: white;
 }</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -3219,7 +3222,7 @@ color: white;</string>
              <double>100.000000000000000</double>
             </property>
             <property name="value">
-             <double>2.000000000000000</double>
+             <double>1.500000000000000</double>
             </property>
            </widget>
           </item>
@@ -3233,7 +3236,7 @@ color: white;</string>
           <item>
            <widget class="QDoubleSpinBox" name="spinIntegralMaximumRods">
             <property name="value">
-             <double>0.200000000000000</double>
+             <double>1.000000000000000</double>
             </property>
            </widget>
           </item>
