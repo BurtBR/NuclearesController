@@ -3,11 +3,13 @@
 
 #include <QDateTime>
 #include <QScrollBar>
+#include "workerdatacollections.h"
 
 #define _TIMERDIVIDER_X2 2
 #define _TIMERDIVIDER_X3 3.529411764
 
 const QMap<QString, MainWindow::NuclearVariable> MainWindow::_variablesNames = {
+    {"REALCURRENTTIME", REALCURRENTTIME},
     {"TIME", TIME},
     {"CORE_TEMP", CORE_TEMP},
     {"CORE_STATE_CRITICALITY", CORE_STATE_CRITICALITY},
@@ -51,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
     connect(this, &MainWindow::TimerStop, _timer, &QTimer::stop);
 
     connect(_ui->buttonStart, &QPushButton::clicked, this, &MainWindow::On_buttonStart_Clicked);
+    connect(_ui->buttonStartDataCollection, &QPushButton::clicked, this, &MainWindow::On_buttonStartDataCollection_Clicked);
 
     connect(_ui->spinRodKp, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinRodKp_editingFinished);
     connect(_ui->spinRodKi, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinRodKi_editingFinished);
@@ -96,6 +99,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 }
 
 MainWindow::~MainWindow(){
+
+    DeleteThread(&_threadDataCollection);
+
     if(_netManager){
         disconnect(_netManager, &QNetworkAccessManager::finished, this, &MainWindow::ReplyReceived);
         delete _netManager;
@@ -111,6 +117,25 @@ MainWindow::~MainWindow(){
     }
 
     delete _ui;
+}
+
+void MainWindow::DeleteThread(QThread **thread){
+
+    if(!thread)
+        return;
+
+    QThread *t = *thread;
+    if(t){
+        t->quit();
+        if(!t->wait(2000)){
+            t->terminate();
+            t->wait();
+        }
+        if(*thread){
+            delete *thread;
+            *thread = nullptr;
+        }
+    }
 }
 
 void MainWindow::ConsoleMessage(QString msg, ConsoleMessageType type){
@@ -385,12 +410,73 @@ void MainWindow::GetRequest(QString variable){
     _netManager->get(QNetworkRequest(QUrl("http://" + _ui->lineIP->text() + "/?variable=" + variable)));
 }
 
+void MainWindow::CollectionFinished(){
+    DeleteThread(&_threadDataCollection);
+    _ui->buttonStartDataCollection->setText("Start Data Collection");
+}
+
 void MainWindow::On_buttonStart_Clicked(){
     if(_timer){
         if(_timer->isActive())
             StopController();
         else
             StartController();
+    }
+}
+
+void MainWindow::On_buttonStartDataCollection_Clicked(){
+    if(_threadDataCollection){
+        emit StopCollection();
+    }else{
+
+        WorkerDataCollections *worker;
+
+        try{
+            worker = new WorkerDataCollections();
+        }catch(...){
+            if(worker)
+                delete worker;
+            ConsoleMessage("Failed to allocate memory!", ConsoleMessageType::Error);
+            return;
+        }
+
+        try{
+            _threadDataCollection = new QThread(this);
+        }catch(...){
+            if(_threadDataCollection){
+                delete _threadDataCollection;
+                _threadDataCollection = nullptr;
+            }
+            delete worker;
+            ConsoleMessage("Failed to allocate memory!", ConsoleMessageType::Error);
+            return;
+        }
+
+        if(_ui->checkCollectRealtime->isChecked())
+            worker->AddVariable(MainWindow::NuclearVariable::REALCURRENTTIME);
+
+        //if(_ui->checkCollectCoreTemperature)
+        //    worker->AddVariable(MainWindow::NuclearVariable::CORE_TEMP);
+
+        //if(_ui->checkCollectRodsCommanded)
+            //worker->AddVariable(MainWindow::NuclearVariable::RODS COMMANDED);
+
+        //if(_ui->checkCollectRodsPosition)
+        //    worker->AddVariable(MainWindow::NuclearVariable::RODS_POS_ACTUAL);
+
+        connect(_threadDataCollection, &QThread::finished, worker, &WorkerDataCollections::deleteLater);
+
+        connect(worker, &WorkerDataCollections::CollectionFinished, this, &MainWindow::CollectionFinished);
+        connect(worker, &WorkerDataCollections::Message, this, &MainWindow::ConsoleMessage);
+
+        connect(this, &MainWindow::StartCollection, worker, &WorkerDataCollections::StartCollection);
+        connect(this, &MainWindow::StopCollection, worker, &WorkerDataCollections::StopCollection);
+
+        worker->moveToThread(_threadDataCollection);
+        _threadDataCollection->start();
+
+        _ui->buttonStartDataCollection->setText("Stop Data Collection");
+        emit StartCollection(_ui->spinCollectionPeriod->value(), _ui->lineCollectionFilename->text(), _ui->lineIP->text());
     }
 }
 

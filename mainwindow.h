@@ -7,6 +7,7 @@
 #include <QNetworkRequest>
 #include <QTimer>
 #include <QVector>
+#include <QThread>
 
 #include "pidcontroller.h"
 
@@ -26,6 +27,7 @@ public:
     };
 
     enum NuclearVariable{
+        REALCURRENTTIME,
         TIME,
         CORE_TEMP,
         CORE_STATE_CRITICALITY,
@@ -57,10 +59,13 @@ public:
         STEAM_TURBINE_2_TEMPERATURE
     };
 
+    static const QMap<QString,NuclearVariable> _variablesNames;
+
 private:
     Ui::MainWindow *_ui;
     QNetworkAccessManager *_netManager = nullptr;
     QTimer *_timer = nullptr;
+    QThread *_threadDataCollection = nullptr;
 
     PIDController _energyPID = PIDController(0 ,0 ,0 , 0.5), _rodPID = PIDController(0, 0, 0, 0.1);
 
@@ -75,9 +80,8 @@ private:
     double _coreTemp = 0;
     int _corePump = 0, _lastGameSpeed = 1;
     uint32_t _lastTime = 0;
-    static const QMap<QString,NuclearVariable> _variablesNames;
 
-    void ConsoleMessage(QString msg, ConsoleMessageType type = ConsoleMessageType::Info);
+    void DeleteThread(QThread **thread);
     void OrderRods();
     void OrderCorePump();
     void OrderSteamFlow(int number);
@@ -102,9 +106,12 @@ public:
     ~MainWindow();
 
 private slots:
+    void ConsoleMessage(QString msg, ConsoleMessageType type = ConsoleMessageType::Info);
     void ReplyReceived(QNetworkReply *reply);
     void Timeout();
+    void CollectionFinished();
     void On_buttonStart_Clicked();
+    void On_buttonStartDataCollection_Clicked();
     void On_spinPeriod_editingFinished();
     void On_spinRodKp_editingFinished();
     void On_spinRodKi_editingFinished();
@@ -130,5 +137,7 @@ private slots:
 signals:
     void TimerStart(int msec);
     void TimerStop();
+    void StartCollection(int msec, QString filename, QString ip);
+    void StopCollection();
 };
 #endif // MAINWINDOW_H

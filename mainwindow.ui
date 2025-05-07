@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1308</width>
-    <height>758</height>
+    <width>1338</width>
+    <height>910</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -3302,7 +3302,7 @@ color: white;</string>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="lineCollectionFilename">
             <property name="inputMask">
              <string/>
             </property>
@@ -3319,7 +3319,7 @@ color: white;</string>
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="spinBox">
+           <widget class="QSpinBox" name="spinCollectionPeriod">
             <property name="maximumSize">
              <size>
               <width>200</width>
@@ -3338,9 +3338,9 @@ color: white;</string>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkCollectTimestamp">
+           <widget class="QCheckBox" name="checkCollectRealtime">
             <property name="text">
-             <string>Collect Timestamp</string>
+             <string>Collect Real Timestamp</string>
             </property>
             <property name="checked">
              <bool>true</bool>
