@@ -3378,6 +3378,20 @@ color: white;</string>
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="checkCollectCumulativeIodine">
+            <property name="text">
+             <string>Collect Core Cumulative Iodine</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkCollectCumulativeXenon">
+            <property name="text">
+             <string>Collect Core Cumulative Xenon</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="verticalSpacer_18">
             <property name="orientation">
              <enum>Qt::Orientation::Vertical</enum>

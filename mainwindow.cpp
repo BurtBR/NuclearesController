@@ -13,6 +13,8 @@ const QMap<QString, MainWindow::NuclearVariable> MainWindow::_variablesNames = {
     {"TIME", TIME},
     {"CORE_TEMP", CORE_TEMP},
     {"CORE_STATE_CRITICALITY", CORE_STATE_CRITICALITY},
+    {"CORE_IODINE_CUMULATIVE", CORE_IODINE_CUMULATIVE},
+    {"CORE_XENON_CUMULATIVE", CORE_XENON_CUMULATIVE},
     {"COOLANT_SEC_0_VOLUME", COOLANT_SEC_0_VOLUME},
     {"COOLANT_SEC_1_VOLUME", COOLANT_SEC_1_VOLUME},
     {"COOLANT_SEC_2_VOLUME", COOLANT_SEC_2_VOLUME},
@@ -456,16 +458,22 @@ void MainWindow::On_buttonStartDataCollection_Clicked(){
         }
 
         if(_ui->checkCollectRealtime->isChecked())
-            worker->AddVariable(MainWindow::NuclearVariable::REALCURRENTTIME);
+            worker->AddVariable(NuclearVariable::REALCURRENTTIME);
 
-        if(_ui->checkCollectCoreTemperature)
-            worker->AddVariable(MainWindow::NuclearVariable::CORE_TEMP);
+        if(_ui->checkCollectCoreTemperature->isChecked())
+            worker->AddVariable(NuclearVariable::CORE_TEMP);
 
-        if(_ui->checkCollectRodsCommanded)
-            worker->AddVariable(MainWindow::NuclearVariable::ROD_BANK_POS_0_ORDERED);
+        if(_ui->checkCollectRodsCommanded->isChecked())
+            worker->AddVariable(NuclearVariable::ROD_BANK_POS_0_ORDERED);
 
-        if(_ui->checkCollectRodsPosition)
-            worker->AddVariable(MainWindow::NuclearVariable::RODS_POS_ACTUAL);
+        if(_ui->checkCollectRodsPosition->isChecked())
+            worker->AddVariable(NuclearVariable::RODS_POS_ACTUAL);
+
+        if(_ui->checkCollectCumulativeIodine->isChecked())
+            worker->AddVariable(NuclearVariable::CORE_IODINE_CUMULATIVE);
+
+        if(_ui->checkCollectCumulativeXenon->isChecked())
+            worker->AddVariable(NuclearVariable::CORE_XENON_CUMULATIVE);
 
         connect(_threadDataCollection, &QThread::finished, worker, &WorkerDataCollections::deleteLater);
 
