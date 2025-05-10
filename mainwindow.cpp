@@ -172,8 +172,6 @@ void MainWindow::OrderRods(){
         _rodPID.ResetSum();
     }
 
-    newHeight = QString::number(newHeight,'f',1).toDouble();
-
     if(newHeight != _rodsActual){
         _rodsActual = newHeight;
         PostRequest("RODS_ALL_POS_ORDERED", QString::number(newHeight));
