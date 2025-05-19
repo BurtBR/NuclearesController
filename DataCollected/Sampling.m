@@ -3,13 +3,18 @@ classdef Sampling
 
         function result = SampleAt(data, idx, N, endIdx)
 
+            if(size(data,2) < 3)
+                warning("The data must have 3 columns, the third being the input");
+                return;
+            end
+
             if endIdx <= idx
                 warning("End index bigger than start index at Sampling");
                 return;
             end
 
             lenData = size(data,1);
-            result = zeros(N,2);
+            result = zeros(N,3);
             idxResult = 1;
 
             periodN = round((endIdx-idx)/N);
@@ -17,6 +22,7 @@ classdef Sampling
             while(N > 0 && idx < lenData)
                 result(idxResult,1) = data(idx,1);
                 result(idxResult,2) = data(idx,2);
+                result(idxResult,3) = data(idx,3);
                 idxResult = idxResult+1;
                 N = N-1;
                 idx = idx + periodN;
@@ -39,12 +45,6 @@ classdef Sampling
         end
 
         function result = SampleAtStepInput(data, N, endIdx)
-
-            if(size(data,2) < 3)
-                warning("The data must have 3 columns, the third being the input");
-                return;
-            end
-
             idx = 1;
             lenData = size(data,1);
     

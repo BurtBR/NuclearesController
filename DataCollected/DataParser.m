@@ -15,19 +15,25 @@ main('Step80.csv', namostras, ordem);
 function main(fileName, nSample, order)
     Legend = {};
     data = importdata(fileName, ';', 1);
+
+    % The input to the reactor is to remove bars from 100%, so the command
+    % at 80 means that 20 were removed. The next lines fix this inversion.
+    data.data(:,3) = 100-data.data(:,3);
+    data.data(:,4) = 100-data.data(:,4);
+
     PlotData();
 
     % Sampling option 1
-    % SampleAtValue(Data(y,x), Value, QtyOfSamples, endIndex)
-    sampled = Sampling.SampleAtValue(data.data(:,1:2), 25.0, nSample, 2000);
+    % SampleAtValue(Data(y,x,i), Value, QtyOfSamples, endIndex)
+    sampled = Sampling.SampleAtValue(data.data(:,[1 2 4]), 25.0, nSample, 2000);
 
     % Sampling option 2
     % SampleAtStepInput(Data(y,x,i), QtyOfSamples, endIndex)
     %sampled = Sampling.SampleAtStepInput(data.data(:,[1 2 4]), nSample, 2000);
 
     % Sampling option 3
-    % SampleAt(Data(y,x), StartIdx, QtyOfSamples, endIndex)
-    %sampled = Sampling.SampleAt(data.data(:,1:2), 100, nSample, 2000);
+    % SampleAt(Data(y,x,i), StartIdx, QtyOfSamples, endIndex)
+    %sampled = Sampling.SampleAt(data.data(:,[1 2 4]), 100, nSample, 2000);
 
     stem(sampled(:,1),sampled(:,2), 'filled', 'Color', [0.0 0.0 0.0]);
     AppendLegend("Sampled");
@@ -54,8 +60,8 @@ function main(fileName, nSample, order)
         ax.YColor = 'r';
         ylabel("Temperature °C");
         yyaxis left;
-        plot(data.data(:,1), 100-data.data(:,4), "LineWidth", 3, "Color", [0.3 1.0 0.3]);
-        plot(data.data(:,1), 100-data.data(:,3), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
+        plot(data.data(:,1), data.data(:,4), "LineWidth", 3, "Color", [0.3 1.0 0.3]);
+        plot(data.data(:,1), data.data(:,3), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
         ylim([0 100]);
         ylabel("Rod % removed");
         ax.YColor = 'b';
