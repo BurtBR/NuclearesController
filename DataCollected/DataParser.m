@@ -14,15 +14,17 @@ main('Step80.csv', namostras, ordem);
 
 function main(fileName, nSample, order)
     Legend = {};
-    % Mudar nome do arquivo
-    % Step70.csv
-    % Step75.csv
-    % Step80.csv
     data = importdata(fileName, ';', 1);
     PlotData();
 
+    % Sampling option 1
     % Sample(StartTemperature, QtyOfSamples, endSampleIndex)
     sampled = Sample(25.0, nSample, 2000);
+
+    % Sampling option 2
+    % SampleAtStepInput(QtyOfSamples, endSampleIndex)
+    % sampled = SampleAtStepInput(nSample, 2000);
+
     stem(sampled(:,1),sampled(:,2), 'filled', 'Color', [0.0 0.0 0.0]);
     AppendLegend("Sampled");
 
@@ -69,6 +71,30 @@ function main(fileName, nSample, order)
         result = zeros(N,2);
 
         while(data.data(idx,2) < startTemp && idx < lenData)
+            idx = idx + 1;
+        end
+
+        periodN = round((endSample-idx)/N);
+        
+        while(N > 0 && idx < lenData)
+            result(idxResult,1) = data.data(idx,1);
+            result(idxResult,2) = data.data(idx,2);
+            idxResult = idxResult+1;
+            N = N-1;
+            idx = idx + periodN;
+        end
+    end
+
+    function result = SampleAtStepInput(N, endSample)
+        idx = 1;
+        idxResult = 1;
+        lenData = size(data.data,1);
+        result = zeros(N,2);
+
+        startValue = data.data(idx,4);
+        idx = idx+1;
+
+        while(data.data(idx,4) == startValue && idx < lenData)
             idx = idx + 1;
         end
 
