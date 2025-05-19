@@ -3,5 +3,9 @@ classdef Identification
         function LeastMeanSquares(data, order)
 
         end
+
+        function RecursiveLeastSquares(data, order)
+
+        end
     end
 end
