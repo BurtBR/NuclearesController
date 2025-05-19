@@ -18,15 +18,15 @@ function main(fileName, nSample, order)
     PlotData();
 
     % Sampling option 1
-    % SampleAtValue(Data(y,x), Value, QtyOfSamples, endSampleIndex)
+    % SampleAtValue(Data(y,x), Value, QtyOfSamples, endIndex)
     sampled = Sampling.SampleAtValue(data.data(:,1:2), 25.0, nSample, 2000);
 
     % Sampling option 2
-    % SampleAtStepInput(Data(y,x,i), QtyOfSamples, endSampleIndex)
+    % SampleAtStepInput(Data(y,x,i), QtyOfSamples, endIndex)
     %sampled = Sampling.SampleAtStepInput(data.data(:,[1 2 4]), nSample, 2000);
 
     % Sampling option 3
-    % SampleAt(Data(y,x), idx, QtyOfSamples, endSampleIndex)
+    % SampleAt(Data(y,x), StartIdx, QtyOfSamples, endIndex)
     %sampled = Sampling.SampleAt(data.data(:,1:2), 100, nSample, 2000);
 
     stem(sampled(:,1),sampled(:,2), 'filled', 'Color', [0.0 0.0 0.0]);
