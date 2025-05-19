@@ -1,19 +1,28 @@
 clear; close all; clc;
 format longG;
 
-main();
+namostras = 10;
 
-function main()
+ordem = 1; % MQnR so funciona com grau 1 e MQR com grau 2
+% A funcao de MQR foi alterada (linha 97 do arquivo Maestro.m)
+% para aumentar em 1 a ordem passada como argumento, apenas para 
+% podermos rodar os dois algoritmos de uma unica vez
+
+main('Step70.csv', namostras, ordem);
+main('Step75.csv', namostras, ordem);
+main('Step80.csv', namostras, ordem);
+
+function main(fileName, nSample, order)
     Legend = {};
     % Mudar nome do arquivo
     % Step70.csv
     % Step75.csv
     % Step80.csv
-    data = importdata('Step75.csv', ';', 1);
+    data = importdata(fileName, ';', 1);
     PlotData();
 
     % Sample(StartTemperature, QtyOfSamples, endSampleIndex)
-    sampled = Sample(25.0, 10, 2000);
+    sampled = Sample(25.0, nSample, 2000);
     stem(sampled(:,1),sampled(:,2), 'filled', 'Color', [0.0 0.0 0.0]);
     AppendLegend("Sampled");
 
@@ -24,9 +33,9 @@ function main()
     sampled = sampled-sampled(1);
 
     % MQnR(data, Order)
-    Maestro.MQnR(sampled, 1);title("Maestro MQnR");
+    Maestro.MQnR_gpt(sampled, order);title("Maestro MQnR");
     % MQR(data, Order)
-    Maestro.MQR(sampled, 2);title("Maestro MQR");
+    Maestro.MQR_gpt(sampled, order);title("Maestro MQR");
 
     function PlotData()
         figure();

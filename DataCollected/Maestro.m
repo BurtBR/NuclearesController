@@ -30,8 +30,8 @@ classdef Maestro
                 yf = y2';
                 d = d-1; % Decrementar una posicion para crear una fila
             end
-            uf
-            yf
+            uf;
+            yf;
             F = [yf uf]; % Matriz F(N)
             FT = F';
             
@@ -40,15 +40,15 @@ classdef Maestro
             
             k = n;
             for i = 1:f % Calculo del vector Y(N)
-                k = k+1
-                y3 = y(k) %y3(k)
-                yn(i) = y3
+                k = k+1;
+                y3 = y(k); %y3(k)
+                yn(i) = y3;
             end
             
             YN = yn';
             
             C = FT*YN;
-            th = B*C
+            th = B*C;
             
             for p = 1:n
                 num1 = th(p+n);
@@ -56,9 +56,8 @@ classdef Maestro
                 den1 = th(p);
                 den2(p) = den1;
             end
-            num = num2
-            den = [1 den2]
-            printsys(num,den,'z')
+            num = num2;
+            den = [1 den2];
             
             j = 0:N-1;
             subplot(2,1,1);
@@ -72,14 +71,17 @@ classdef Maestro
             
             %..EQM 
             e = sqrt(sum((y'-y4').^2))/N; %..0.0247
+
+            fprintf("Identificação por MQnR")
+            printsys(num,den,'z')
+            fprintf("EQM: %f \n", e);
             
-            fim = 1;
         end
 
         function MQR(sampled, order)
             % Identificacion recursiva modelo de segundo orden - Recursivo
             figure();
-            n = order;
+            n = order+1;
             u = [0 ones(1, size(sampled,1)-1)]; % Vector de entradas
             y = sampled'; % Vector de salidas
             t = 0:1:(size(sampled,1)-1);
@@ -92,21 +94,21 @@ classdef Maestro
             
                p = 1000*eye(2*n);
               th = [zeros(1,2*n)]';
-            phit = [-y(n) -y(n-1) u(n) u(n-1)]
+            phit = [-y(n) -y(n-1) u(n) u(n-1)];
             
             for k=n+1:length(y)
-                   l = (p*phit')/(lamda+phit*p*phit')
-                   e = y(k)-phit*th
-                  th = th+l*e
-                   p = (1/lamda)*(eye(2*n)-l*phit)*p
-                phit = [-y(k) -y(k-1) u(k) u(k-1)]
+                   l = (p*phit')/(lamda+phit*p*phit');
+                   e = y(k)-phit*th;
+                  th = th+l*e;
+                   p = (1/lamda)*(eye(2*n)-l*phit)*p;
+                phit = [-y(k) -y(k-1) u(k) u(k-1)];
             end
             
             u1 = ones(1, size(sampled,1));
             n = [th(3) th(4)];
             d = [1 th(1) th(2)];
-            printsys(n,d,'z')
-            y1 = dlsim(n,d,u1)
+            
+            y1 = dlsim(n,d,u1);
             plot(t,y1)
             hold on
             plot(t,y,'*')
@@ -117,7 +119,96 @@ classdef Maestro
             N = length(y);
             e2 = sqrt(sum((y'-y1).^2))/N; %..0.0131
             
-            fim = 1;
+            fprintf("Identificação por MQR")
+            printsys(n,d,'z')
+            fprintf("EQM: %f \n", e2);
+
         end
+    
+        function MQnR_gpt(sampled, order)
+            figure();
+            u = [0 ones(1, size(sampled,1)-1)];
+            y = sampled';
+            n = order;
+            
+            N = length(u); % Número total de amostras
+            f = N - n;     % Quantidade de linhas para regressão
+            PHI = zeros(f, 2*n); 
+            YN = zeros(f, 1);
+        
+            for k = n+1:N
+                phi_y = -y(k-1:-1:k-n);
+                phi_u = u(k-1:-1:k-n);
+                PHI(k-n, :) = [phi_y, phi_u];
+                YN(k-n) = y(k);
+            end
+        
+            th = (PHI' * PHI) \ (PHI' * YN);
+        
+            num = th(n+1:end)';   % Coeficientes do numerador
+            den = [1 th(1:n)'];   % Coeficientes do denominador
+        
+            j = 0:N-1;
+            subplot(2,1,1);
+            y_est = filter(num, den, u);
+            plot(j, y_est)
+            hold on
+            plot(j, y, '*')
+            grid on
+        
+            % EQM
+            e = sqrt(sum((y - y_est').^2)) / N;
+        
+            fprintf("Identificação por MQnR\n")
+            printsys(num, den, 'z')
+            fprintf("EQM: %f \n", e);
+        end
+
+        function MQR_gpt(sampled, order)
+            figure();
+            n = order;
+            u = [0 ones(1, size(sampled,1)-1)];
+            y = sampled';
+            t = 0:1:(size(sampled,1)-1);
+            
+            lamda = 1;
+            th = zeros(2*n, 1);
+            P = 1000 * eye(2*n);
+        
+            % Inicializar phit
+            k = n + 1;
+            phi_y = -y(k-1:-1:k-n);
+            phi_u = u(k-1:-1:k-n);
+            phit = [phi_y phi_u];
+        
+            for k = n+1:length(y)
+                phi_y = -y(k-1:-1:k-n);
+                phi_u = u(k-1:-1:k-n);
+                phit = [phi_y phi_u];
+                
+                l = (P * phit') / (lamda + phit * P * phit');
+                e = y(k) - phit * th;
+                th = th + l * e;
+                P = (1/lamda) * (eye(2*n) - l * phit) * P;
+            end
+        
+            num = th(n+1:end)';
+            den = [1 th(1:n)'];
+            y_est = dlsim(num, den, ones(1, size(sampled,1)));
+        
+            plot(t, y_est)
+            hold on
+            plot(t, y, '*')
+            grid on
+        
+            % EQM
+            N = length(y);
+            e2 = sqrt(sum((y - y_est').^2)) / N;
+        
+            fprintf("Identificação por MQR\n")
+            printsys(num, den, 'z')
+            fprintf("EQM: %f \n", e2);
+        end
+
     end
 end
