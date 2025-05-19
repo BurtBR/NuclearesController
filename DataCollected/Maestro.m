@@ -81,7 +81,7 @@ classdef Maestro
         function MQR(sampled, order)
             % Identificacion recursiva modelo de segundo orden - Recursivo
             figure();
-            n = order+1;
+            n = order;
             u = [0 ones(1, size(sampled,1)-1)]; % Vector de entradas
             y = sampled'; % Vector de salidas
             t = 0:1:(size(sampled,1)-1);
@@ -161,7 +161,7 @@ classdef Maestro
         
             fprintf("Identificação por MQnR\n")
             printsys(num, den, 'z')
-            fprintf("EQM: %f \n", e);
+            fprintf("EQM: %f \n", sum(e));
         end
 
         function MQR_gpt(sampled, order)
@@ -207,7 +207,7 @@ classdef Maestro
         
             fprintf("Identificação por MQR\n")
             printsys(num, den, 'z')
-            fprintf("EQM: %f \n", e2);
+            fprintf("EQM: %f \n", sum(e2));
         end
 
     end
