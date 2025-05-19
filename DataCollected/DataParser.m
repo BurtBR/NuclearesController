@@ -12,8 +12,8 @@ function main()
     data = importdata('Step75.csv', ';', 1);
     PlotData();
 
-    % Sample(StartTemperature, SampleSpacing, QtyOfSamples)
-    sampled = Sample(25.0, 10, 180);
+    % Sample(StartTemperature, QtyOfSamples, endSampleIndex)
+    sampled = Sample(25.0, 10, 2000);
     stem(sampled(:,1),sampled(:,2), 'filled', 'Color', [0.0 0.0 0.0]);
     AppendLegend("Sampled");
 
@@ -48,13 +48,12 @@ function main()
         AppendLegend("Rod Command");
         AppendLegend("Rod Position");
         AppendLegend("Core Temperature");
-        %legend("Rod Command", "Rod Position", "Core Temperature");
         xlabel("Time [ms]");
         title("Uncontrolled core");
         yyaxis right;
     end
 
-    function result = Sample(startTemp, periodN, N)
+    function result = Sample(startTemp, N, endSample)
         idx = 1;
         idxResult = 1;
         lenData = size(data.data,1);
@@ -63,6 +62,8 @@ function main()
         while(data.data(idx,2) < startTemp && idx < lenData)
             idx = idx + 1;
         end
+
+        periodN = round((endSample-idx)/N);
         
         while(N > 0 && idx < lenData)
             result(idxResult,1) = data.data(idx,1);
