@@ -1,5 +1,21 @@
 classdef Maestro
     methods(Static)
+        function Run(sampled, order)
+            sampled = sampled(:,2);
+            sampled = sampled/max(sampled);
+            sampled = sampled-sampled(1);
+        
+            % MQnR_gpt(data, Order)
+            Maestro.MQnR_gpt(sampled, order);title("Maestro MQnR");
+            % MQR_gpt(data, Order)
+            %Maestro.MQR_gpt(sampled, order);title("Maestro MQR");
+        
+            % MQnR(data, Order)
+            %Maestro.MQnR(sampled, order);title("Maestro MQnR");
+            % MQR(data, Order)
+            %Maestro.MQR(sampled, order);title("Maestro MQR");
+        end
+
         function MQnR(sampled, order)
             % Programa para Identificacion parametrica no recursiva
             figure();

@@ -3,14 +3,11 @@ format longG;
 
 namostras = 70;
 
-ordem = 2; % MQnR so funciona com grau 1 e MQR com grau 2
-% A funcao de MQR foi alterada (linha 97 do arquivo Maestro.m)
-% para aumentar em 1 a ordem passada como argumento, apenas para 
-% podermos rodar os dois algoritmos de uma unica vez
+ordem = 2;
 
-%main('Step70.csv', namostras, ordem);
+main('Step70.csv', namostras, ordem);
 main('Step75.csv', namostras, ordem);
-%main('Step80.csv', namostras, ordem);
+main('Step80.csv', namostras, ordem);
 
 function main(fileName, nSample, order)
     Legend = {};
@@ -25,11 +22,11 @@ function main(fileName, nSample, order)
 
     % Sampling option 1
     % SampleAtValue(Data(y,x,i), Value, QtyOfSamples, endIndex)
-    sampled = Sampling.SampleAtValue(data.data(:,[1 2 4]), 25.0, nSample, 2000);
+    %sampled = Sampling.SampleAtValue(data.data(:,[1 2 4]), 25.0, nSample, 2000);
 
     % Sampling option 2
     % SampleAtStepInput(Data(y,x,i), QtyOfSamples, endIndex)
-    %sampled = Sampling.SampleAtStepInput(data.data(:,[1 2 4]), nSample, 2000);
+    sampled = Sampling.SampleAtStepInput(data.data(:,[1 2 4]), nSample, 2000);
 
     % Sampling option 3
     % SampleAt(Data(y,x,i), StartIdx, QtyOfSamples, endIndex)
@@ -40,21 +37,9 @@ function main(fileName, nSample, order)
 
     legend(Legend);
 
-    Identification.LeastMeanSquares(sampled, 1);
+    Identification.LeastMeanSquares(sampled, order);
 
-    sampled = sampled(:,2);
-    sampled = sampled/max(sampled);
-    sampled = sampled-sampled(1);
-
-    % MQnR_gpt(data, Order)
-    Maestro.MQnR_gpt(sampled, order);title("Maestro MQnR");
-    % MQR_gpt(data, Order)
-    Maestro.MQR_gpt(sampled, order);title("Maestro MQR");
-
-    % MQnR(data, Order)
-    %Maestro.MQnR(sampled, order);title("Maestro MQnR");
-    % MQR(data, Order)
-    %Maestro.MQR(sampled, order);title("Maestro MQR");
+    %Maestro.Run(sampled, order);
 
     function PlotData()
         figure();
