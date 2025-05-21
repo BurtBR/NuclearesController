@@ -8,7 +8,7 @@ classdef Maestro
             % MQnR_gpt(data, Order)
             Maestro.MQnR_gpt(sampled, order);title("Maestro MQnR");
             % MQR_gpt(data, Order)
-            %Maestro.MQR_gpt(sampled, order);title("Maestro MQR");
+            Maestro.MQR_gpt(sampled, order);title("Maestro MQR");
         
             % MQnR(data, Order)
             %Maestro.MQnR(sampled, order);title("Maestro MQnR");
