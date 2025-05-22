@@ -20,7 +20,27 @@ classdef Identification
     
     methods(Access=private,Static)
 
-        function coeficients = LMS_FirstOrder(u, y)
+        function coeficients = LMS_FirstOrder(input, output)
+            minoutput = min(output);
+            
+            output = output-minoutput;
+            y = flip(output);
+            u = flip(input);
+            phi = [-[y(2:end)] [u(2:end)]];
+            y = y(1:end-1);
+            coeficients = pinv(phi)*y;
+
+            num = coeficients(2);
+            den = [1 coeficients(1)];
+            printsys(num, den,'z');
+
+            t = 1:size(output,1);
+            figure();
+            estimation = dlsim(num, den, input) + minoutput;
+            scatter(t, output+minoutput, 'o', 'MarkerEdgeColor', [1.0 0.5 0.5],'LineWidth', 1);hold on;
+            plot(t, estimation, 'LineWidth', 3,'Color',[0.5 0.5 1.0]);
+            legend("Experiment", "Estimation");
+            xlabel("n");
         end
 
         function coeficients = LMS_SecondOrder(input, output)
@@ -46,7 +66,7 @@ classdef Identification
             scatter(t, output+minoutput, 'o', 'MarkerEdgeColor', [1.0 0.5 0.5],'LineWidth', 1);hold on;
             plot(t, estimation, 'LineWidth', 3,'Color',[0.5 0.5 1.0]);
             legend("Experiment", "Estimation");
-            xlabel("n")
+            xlabel("n");
         end
 
         function result = FirstOrder(a, b)

@@ -1,9 +1,9 @@
 clear; close all; clc;
 format longG;
 
-namostras = 70;
+namostras = 10;
 
-ordem = 2;
+ordem = 1;
 
 main('Step70.csv', namostras, ordem);
 main('Step75.csv', namostras, ordem);
