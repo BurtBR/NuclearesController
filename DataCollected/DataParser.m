@@ -32,12 +32,12 @@ function main(fileName, nSample, order)
     % SampleAt(Data(y,x,i), StartIdx, QtyOfSamples, endIndex)
     %sampled = Sampling.SampleAt(data.data(:,[1 2 4]), 100, nSample, 2000);
 
-    stem(sampled(:,1),sampled(:,2), 'filled', 'Color', [0.0 0.0 0.0]);
-    AppendLegend("Sampled");
+    %stem(sampled(:,1),sampled(:,2), 'filled', 'Color', [0.0 0.0 0.0]);
+    %AppendLegend("Sampled");
 
     legend(Legend);
 
-    Identification.LeastMeanSquares(sampled, order);
+    %Identification.LeastMeanSquares(sampled, order);
 
     %Maestro.Run(sampled, order);
 
@@ -64,6 +64,9 @@ function main(fileName, nSample, order)
         xlabel("Time [ms]");
         title("Uncontrolled core");
         yyaxis right;
+
+        xlim([0 8e5]);
+        fontsize(20,"points")
     end
 
     function AppendLegend(text)

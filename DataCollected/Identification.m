@@ -14,13 +14,24 @@ classdef Identification
         end
 
         function RecursiveLeastSquares(data, order)
-
+            switch order
+                case 1
+                    RLS_FirstOrder(data(:,3), data(:,2));
+                case 2
+                    RLS_SecondOrder(data(:,3), data(:,2));
+                otherwise
+                    warning("Recursive Least Squares with order " + order + " not implemented");
+                    return;
+            end
         end
     end
     
     methods(Access=private,Static)
 
         function coeficients = LMS_FirstOrder(input, output)
+
+            % https://www.youtube.com/watch?v=H_qrxFZjM2c
+            
             minoutput = min(output);
             
             output = output-minoutput;
@@ -69,7 +80,11 @@ classdef Identification
             xlabel("n");
         end
 
-        function result = FirstOrder(a, b)
+        function coeficients = RLS_FirstOrder(input, output)
+
+        end
+
+        function coeficients = RLS_SecondOrder(input, output)
 
         end
 
