@@ -45,18 +45,6 @@ classdef Identification
             coefficients = pinv(phi)*y;
 
             Identification.PlotSystemEstimation([coefficients(2)], [1 coefficients(1)], input, output, minoutput);
-
-            % num = coefficients(2);
-            % den = [1 coefficients(1)];
-            % printsys(num, den,'z');
-            % 
-            % t = 1:size(output,1);
-            % figure();
-            % estimation = dlsim(num, den, input) + minoutput;
-            % scatter(t, output+minoutput, 'o', 'MarkerEdgeColor', [1.0 0.5 0.5],'LineWidth', 1);hold on;
-            % plot(t, estimation, 'LineWidth', 3,'Color',[0.5 0.5 1.0]);
-            % legend("Experiment", "Estimation");
-            % xlabel("n");
         end
 
         %                               c*z + d
@@ -76,18 +64,6 @@ classdef Identification
             coefficients = pinv(phi)*y;
 
             Identification.PlotSystemEstimation(coefficients(3:4)', [1 coefficients(1:2)'], input, output, minoutput);
-
-            % num = coefficients(3:4)';
-            % den = [1 coefficients(1:2)'];
-            % printsys(num, den,'z');
-            % 
-            % t = 1:size(output,1);
-            % figure();
-            % estimation = dlsim(num, den, input) + minoutput;
-            % scatter(t, output+minoutput, 'o', 'MarkerEdgeColor', [1.0 0.5 0.5],'LineWidth', 1);hold on;
-            % plot(t, estimation, 'LineWidth', 3,'Color',[0.5 0.5 1.0]);
-            % legend("Experiment", "Estimation");
-            % xlabel("n");
         end
 
         function coefficients = RLS(order, input, output)

@@ -2,10 +2,8 @@ clear; close all; clc;
 format longG;
 
 %XenonPlot('XenonEffect.csv');
-%return;
 
 namostras = 200;
-
 ordem = 2;
 
 %main('Step70.csv', namostras, ordem);
@@ -35,15 +33,13 @@ function main(fileName, nSample, order)
     % SampleAt(Data(y,x,i), StartIdx, QtyOfSamples, endIndex)
     %sampled = Sampling.SampleAt(data.data(:,[1 2 4]), 100, nSample, 2000);
 
-    %stem(sampled(:,1),sampled(:,2), 'filled', 'Color', [0.0 0.0 0.0]);
-    %AppendLegend("Sampled");
+    stem(sampled(:,1),sampled(:,2), 'filled', 'Color', [0.0 0.0 0.0]);
+    AppendLegend("Sampled");
 
     legend(Legend);
 
     Identification.LeastMeanSquares(sampled, order);
     Identification.RecursiveLeastSquares(sampled, order);
-
-    %Maestro.Run(sampled, order);
 
     function PlotData()
         figure();
