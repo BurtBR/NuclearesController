@@ -1,9 +1,11 @@
 clear; close all; clc;
 format longG;
 
-%period = 23.4;
-%Z = tf([1.2237 -0.12052],[1 -1.2012 0.28657], period)
-%S = d2c(Z)
+period = 23.4;
+Z = tf([1.2237 -0.12052],[1 -1.2012 0.28657], period);
+PlotFinalAnalisis(Z);
+
+return;
 
 namostras = 25;
 ordem = 2;
@@ -17,6 +19,32 @@ ordem = 2;
 %main('Step70.csv', namostras, ordem);
 main('Step75.csv', namostras, ordem);
 %main('Step80.csv', namostras, ordem);
+
+function PlotFinalAnalisis(Z)
+    Z
+    S = d2c(Z)
+
+    figure();
+    rlocus(Z);
+    pbaspect([1 1 1]);
+    daspect([1 1 1]);
+    fontsize(20,"points");
+    set(findall(gca, 'Type', 'Line'),'LineWidth',5);
+    set(findall(gca, 'Type', 'Line'),'MarkerSize',20);
+
+    % figure();
+    % pzmap(Z);
+    % fontsize(20,"points");
+    % pbaspect([1 1 1]);
+    % daspect([1 1 1]);
+    % set(findall(gca, 'Type', 'Line'),'LineWidth',5);
+    % set(findall(gca, 'Type', 'Line'),'MarkerSize',20);
+
+    figure();
+    margin(Z);
+    fontsize(20,"points");
+    set(findall(gca, 'Type', 'Line'),'LineWidth',2);
+end
 
 function rmseError = testDataLMS(fileName, nSample, order)
     data = importdata(fileName, ';', 1);
