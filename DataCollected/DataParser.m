@@ -1,17 +1,21 @@
 clear; close all; clc;
 format longG;
 
+%period = 23.4;
+%Z = tf([1.2237 -0.12052],[1 -1.2012 0.28657], period)
+%S = d2c(Z)
+
 namostras = 25;
 ordem = 2;
 
-PlotTestData('Step70.csv', 5:10:1000, ordem);
-PlotTestData('Step75.csv', 5:10:1000, ordem);
-PlotTestData('Step80.csv', 5:10:1000, ordem);
+%PlotTestData('Step70.csv', 5:10:1000, ordem);
+%PlotTestData('Step75.csv', 5:10:1000, ordem);
+%PlotTestData('Step80.csv', 5:10:1000, ordem);
 
 %XenonPlot('XenonEffect.csv');
 
 %main('Step70.csv', namostras, ordem);
-%main('Step75.csv', namostras, ordem);
+main('Step75.csv', namostras, ordem);
 %main('Step80.csv', namostras, ordem);
 
 function rmseError = testDataLMS(fileName, nSample, order)
