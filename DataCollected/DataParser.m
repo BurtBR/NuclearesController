@@ -1,14 +1,91 @@
 clear; close all; clc;
 format longG;
 
-%XenonPlot('XenonEffect.csv');
-
-namostras = 200;
+namostras = 25;
 ordem = 2;
+
+%PlotTestData('Step70.csv', 5:10:1000, ordem);
+%PlotTestData('Step75.csv', 5:10:1000, ordem)
+%PlotTestData('Step80.csv', 5:10:1000, ordem)
+
+%XenonPlot('XenonEffect.csv');
 
 %main('Step70.csv', namostras, ordem);
 main('Step75.csv', namostras, ordem);
 %main('Step80.csv', namostras, ordem);
+
+function rmseError = testDataLMS(fileName, nSample, order)
+    data = importdata(fileName, ';', 1);
+
+    % The input to the reactor is to remove bars from 100%, so the command
+    % at 80 means that 20 were removed. The next lines fix this inversion.
+    data.data(:,3) = 100-data.data(:,3);
+    data.data(:,4) = 100-data.data(:,4);
+
+    sampled = Sampling.SampleAtStepInput(data.data(:,[1 2 4]), nSample, 2000);
+    
+    coefficients = Identification.LeastMeanSquares(sampled, order);
+
+    input = sampled(:,3);
+    output = sampled(:,2);
+
+    startValue = min(output);
+    t = 0:(size(output,1)-1);
+    estimation = dlsim(coefficients(order+1:end)', [1 coefficients(1:order)'], input)+startValue;
+
+    rmseError = rmse(output, estimation);
+end
+
+function rmseError = testDataRMS(fileName, nSample, order)
+    data = importdata(fileName, ';', 1);
+
+    % The input to the reactor is to remove bars from 100%, so the command
+    % at 80 means that 20 were removed. The next lines fix this inversion.
+    data.data(:,3) = 100-data.data(:,3);
+    data.data(:,4) = 100-data.data(:,4);
+
+    sampled = Sampling.SampleAtStepInput(data.data(:,[1 2 4]), nSample, 2000);
+    
+    coefficients = Identification.RecursiveLeastSquares(sampled, order);
+
+    input = sampled(:,3);
+    output = sampled(:,2);
+
+    startValue = min(output);
+    t = 0:(size(output,1)-1);
+    estimation = dlsim(coefficients(order+1:end)', [1 coefficients(1:order)'], input)+startValue;
+
+    rmseError = rmse(output, estimation);
+end
+
+function PlotTestData(fileName, nSample, order)
+        figure(Name=fileName);hold on;
+
+        errors = [];
+
+        for k = nSample
+            errors = [errors;
+                      k testDataLMS(fileName, k, order)];
+        end
+        
+        plot(errors(:,1), errors(:,2), LineWidth=5, Color=[1.0 0.5 0.5]);
+
+        errors = [];
+
+        for k = nSample
+            errors = [errors;
+                      k testDataRMS(fileName, k, order)];
+        end
+        
+        plot(errors(:,1), errors(:,2), LineWidth=5, Color=[0.5 0.5 1.0]);
+
+        title("Identification Test - Order " + order);
+        xlabel("Samples");
+        ylabel("Root mean squared error");
+        ylim([0 10]);
+        fontsize(20,"points");
+        legend("LMS", "RMS");
+    end
 
 function main(fileName, nSample, order)
     Legend = {};
@@ -38,8 +115,17 @@ function main(fileName, nSample, order)
 
     legend(Legend);
 
-    Identification.LeastMeanSquares(sampled, order);
-    Identification.RecursiveLeastSquares(sampled, order);
+    minOutput = min(sampled(:,2));
+    input = sampled(:,3);
+    output = sampled(:,2)-minOutput;
+
+    coefficients = Identification.LeastMeanSquares(sampled, order);
+    Identification.PlotSystemEstimation(coefficients(order+1:end)', [1 coefficients(1:order)'], input, output, minOutput);
+    title("Least Mean Squares");
+
+    coefficients = Identification.RecursiveLeastSquares(sampled, order);
+    Identification.PlotSystemEstimation(coefficients(order+1:end)', [1 coefficients(1:order)'], input, output, minOutput);
+    title("Recursive Least Squares");
 
     function PlotData()
         figure();
@@ -66,7 +152,7 @@ function main(fileName, nSample, order)
         yyaxis right;
 
         xlim([0 8e5]);
-        fontsize(20,"points")
+        fontsize(20,"points");
     end
 
     function AppendLegend(text)

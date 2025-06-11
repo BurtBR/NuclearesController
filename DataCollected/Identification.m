@@ -1,28 +1,42 @@
 classdef Identification
 
     methods(Static)
-        function LeastMeanSquares(data, order)
+        function coefficients = LeastMeanSquares(data, order)
             switch order
                 case 1
-                    Identification.LMS_FirstOrder(data(:,3), data(:,2));
+                    coefficients = Identification.LMS_FirstOrder(data(:,3), data(:,2));
                 case 2
-                    Identification.LMS_SecondOrder(data(:,3), data(:,2));
+                    coefficients = Identification.LMS_SecondOrder(data(:,3), data(:,2));
                 otherwise
                     warning("Least Mean Square with order " + order + " not implemented");
                     return;
             end
         end
 
-        function RecursiveLeastSquares(data, order)
+        function coefficients = RecursiveLeastSquares(data, order)
             switch order
                 case 1
-                    Identification.RLS(order, data(:,3), data(:,2));
+                    coefficients = Identification.RLS(order, data(:,3), data(:,2));
                 case 2
-                    Identification.RLS(order, data(:,3), data(:,2));
+                    coefficients = Identification.RLS(order, data(:,3), data(:,2));
                 otherwise
                     warning("Recursive Least Squares with order " + order + " not implemented");
                     return;
             end
+        end
+
+        function PlotSystemEstimation(num, den, input, output, startValue)
+            printsys(num, den,'z');
+
+            t = 0:(size(output,1)-1);
+            figure();
+            estimation = dlsim(num, den, input)+startValue;
+            scatter(t, output+startValue, 'o', 'MarkerEdgeColor', [1.0 0.5 0.5],'LineWidth', 1);hold on;
+            plot(t, estimation, 'LineWidth', 3,'Color',[0.5 0.5 1.0]);
+            legend("Experiment", "Estimation");
+            xlabel("n");
+            ylabel("Temperature °C")
+            fontsize(20,"points");
         end
     end
     
@@ -44,7 +58,7 @@ classdef Identification
             y = y(1:end-1);
             coefficients = pinv(phi)*y;
 
-            Identification.PlotSystemEstimation([coefficients(2)], [1 coefficients(1)], input, output, minoutput);
+            %Identification.PlotSystemEstimation([coefficients(2)], [1 coefficients(1)], input, output, minoutput);
         end
 
         %                               c*z + d
@@ -63,7 +77,7 @@ classdef Identification
             y = y(1:end-2);
             coefficients = pinv(phi)*y;
 
-            Identification.PlotSystemEstimation(coefficients(3:4)', [1 coefficients(1:2)'], input, output, minoutput);
+            %Identification.PlotSystemEstimation(coefficients(3:4)', [1 coefficients(1:2)'], input, output, minoutput);
         end
 
         function coefficients = RLS(order, input, output)
@@ -93,22 +107,9 @@ classdef Identification
                 phi = [-y(k:-1:k-order+1)' x(k:-1:k-order+1)'];
             end
 
-            Identification.PlotSystemEstimation(coefficients(order+1:end)', [1 coefficients(1:order)'], input, output, minoutput);
+            %Identification.PlotSystemEstimation(coefficients(order+1:end)', [1 coefficients(1:order)'], input, output, minoutput);
 
         end
-
-        function PlotSystemEstimation(num, den, input, output, startValue)
-            printsys(num, den,'z');
-
-            t = 0:(size(output,1)-1);
-            figure();
-            estimation = dlsim(num, den, input)+startValue;
-            scatter(t, output+startValue, 'o', 'MarkerEdgeColor', [1.0 0.5 0.5],'LineWidth', 1);hold on;
-            plot(t, estimation, 'LineWidth', 3,'Color',[0.5 0.5 1.0]);
-            legend("Experiment", "Estimation");
-            xlabel("n");
-        end
-
     end
 
 end
