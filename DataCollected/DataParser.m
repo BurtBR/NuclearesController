@@ -2,11 +2,11 @@ clear; close all; clc;
 format longG;
 
 namostras = 25;
-ordem = 1;
+ordem = 2;
 
 PlotTestData('Step70.csv', 5:10:1000, ordem);
-PlotTestData('Step75.csv', 5:10:1000, ordem)
-PlotTestData('Step80.csv', 5:10:1000, ordem)
+PlotTestData('Step75.csv', 5:10:1000, ordem);
+PlotTestData('Step80.csv', 5:10:1000, ordem);
 
 %XenonPlot('XenonEffect.csv');
 
