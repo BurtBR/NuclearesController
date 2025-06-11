@@ -2,16 +2,16 @@ clear; close all; clc;
 format longG;
 
 namostras = 25;
-ordem = 2;
+ordem = 1;
 
-%PlotTestData('Step70.csv', 5:10:1000, ordem);
-%PlotTestData('Step75.csv', 5:10:1000, ordem)
-%PlotTestData('Step80.csv', 5:10:1000, ordem)
+PlotTestData('Step70.csv', 5:10:1000, ordem);
+PlotTestData('Step75.csv', 5:10:1000, ordem)
+PlotTestData('Step80.csv', 5:10:1000, ordem)
 
 %XenonPlot('XenonEffect.csv');
 
 %main('Step70.csv', namostras, ordem);
-main('Step75.csv', namostras, ordem);
+%main('Step75.csv', namostras, ordem);
 %main('Step80.csv', namostras, ordem);
 
 function rmseError = testDataLMS(fileName, nSample, order)
@@ -84,7 +84,7 @@ function PlotTestData(fileName, nSample, order)
         ylabel("Root mean squared error");
         ylim([0 10]);
         fontsize(20,"points");
-        legend("LMS", "RMS");
+        legend("LMS", "RLS");
     end
 
 function main(fileName, nSample, order)
