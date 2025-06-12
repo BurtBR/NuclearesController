@@ -4,8 +4,6 @@ format longG;
 period = 23.4;
 PlotFinalAnalisis([1.2237 -0.12052],[1 -1.2012 0.28657], period);
 
-return;
-
 namostras = 25;
 ordem = 2;
 
