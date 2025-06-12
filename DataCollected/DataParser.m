@@ -2,8 +2,7 @@ clear; close all; clc;
 format longG;
 
 period = 23.4;
-Z = tf([1.2237 -0.12052],[1 -1.2012 0.28657], period);
-PlotFinalAnalisis(Z);
+PlotFinalAnalisis([1.2237 -0.12052],[1 -1.2012 0.28657], period);
 
 return;
 
@@ -20,8 +19,12 @@ ordem = 2;
 main('Step75.csv', namostras, ordem);
 %main('Step80.csv', namostras, ordem);
 
-function PlotFinalAnalisis(Z)
-    Z
+function PlotFinalAnalisis(num, den, period)
+    Z = tf(num, den, period)
+
+    disp("Zeros: " + roots(num));
+    disp("Poles: " + roots(den));
+
     S = d2c(Z)
 
     figure();
@@ -31,6 +34,15 @@ function PlotFinalAnalisis(Z)
     fontsize(20,"points");
     set(findall(gca, 'Type', 'Line'),'LineWidth',5);
     set(findall(gca, 'Type', 'Line'),'MarkerSize',20);
+
+    % figure();
+    % step(feedback(Z,1.85));
+    % title('Gain=1.85');
+    % fontsize(20,"points");
+    % figure();
+    % step(feedback(Z,1.86));
+    % title('Gain=1.86');
+    % fontsize(20,"points");
 
     % figure();
     % pzmap(Z);
@@ -43,7 +55,6 @@ function PlotFinalAnalisis(Z)
     figure();
     margin(Z);
     fontsize(20,"points");
-    set(findall(gca, 'Type', 'Line'),'LineWidth',2);
 end
 
 function rmseError = testDataLMS(fileName, nSample, order)
