@@ -1,8 +1,8 @@
 clear; close all; clc;
-format longG;
+%format longG;
 
-period = 23.4;
-PlotFinalAnalisis([1.2237 -0.12052],[1 -1.2012 0.28657], period);
+%period = 23.4;
+%PlotFinalAnalisis([1.2237 -0.12052],[1 -1.2012 0.28657], period);
 
 namostras = 25;
 ordem = 2;
@@ -24,6 +24,32 @@ function PlotFinalAnalisis(num, den, period)
     disp("Poles: " + roots(den));
 
     S = d2c(Z)
+
+    %TEMP
+    %s = tf('s');
+    %S = (0.54697 + 0.0030573/s + 6.235*s)*S
+    %TEMP
+
+    Gfs = feedback(S,1)
+    figure();
+    margin(Gfs);
+    fontsize(20,"points");
+    set(findall(gcf, 'Type', 'Line'),'LineWidth',5);
+    set(findall(gcf, 'Type', 'Line'),'MarkerSize',20);
+
+    figure();
+    rlocus(Gfs);hold on;
+    scatter(-0.0383764, 0.0464558, 'x', 'red');
+    pbaspect([1 1 1]);
+    daspect([1 1 1]);
+    fontsize(20,"points");
+    set(findall(gcf, 'Type', 'Line'),'LineWidth',5);
+    set(findall(gcf, 'Type', 'Line'),'MarkerSize',20);
+    set(findall(gcf, 'Type', 'Marker'),'MarkerSize',20);
+
+    Z = c2d(S,10)
+    figure();
+    step(feedback(Z,1))
 
     figure();
     rlocus(Z);
@@ -47,12 +73,14 @@ function PlotFinalAnalisis(num, den, period)
     % fontsize(20,"points");
     % pbaspect([1 1 1]);
     % daspect([1 1 1]);
-    % set(findall(gca, 'Type', 'Line'),'LineWidth',5);
-    % set(findall(gca, 'Type', 'Line'),'MarkerSize',20);
+    % set(findall(gcf, 'Type', 'Line'),'LineWidth',5);
+    % set(findall(gcf, 'Type', 'Line'),'MarkerSize',20);
 
     figure();
     margin(Z);
     fontsize(20,"points");
+    set(findall(gcf, 'Type', 'Line'),'LineWidth',5);
+    set(findall(gcf, 'Type', 'Line'),'MarkerSize',20);
 end
 
 function rmseError = testDataLMS(fileName, nSample, order)
