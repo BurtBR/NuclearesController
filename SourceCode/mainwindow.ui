@@ -177,7 +177,7 @@ color: white;</string>
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tabOptions">
        <attribute name="title">
@@ -219,10 +219,10 @@ color: white;</string>
              <number>100</number>
             </property>
             <property name="maximum">
-             <number>5000</number>
+             <number>1000000</number>
             </property>
             <property name="value">
-             <number>1000</number>
+             <number>10000</number>
             </property>
            </widget>
           </item>
@@ -1403,7 +1403,7 @@ color: white;</string>
              <string>Enable Steam Controller</string>
             </property>
             <property name="checked">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -2885,7 +2885,7 @@ color: white;</string>
              <string>Enable Core Pump Controller</string>
             </property>
             <property name="checked">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
