@@ -101,11 +101,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
     _ui->tabWidget->removeTab(1);
     _ui->tabWidget->removeTab(1);
     _ui->tabWidget->removeTab(1);
-    //_ui->tabWidget->removeTab(1);
-
-    // NOT YET IMPLEMENTED BY THE NUCLEARES DEV TO WEBSERVER
-    // PRESSURE CONTROL
-    //_ui->tabWidget->removeTab(2);
 }
 
 MainWindow::~MainWindow(){
