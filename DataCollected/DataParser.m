@@ -43,8 +43,8 @@ function PlotControlled(fileName)
         ax.YColor = 'r';
         ylabel("Temperature °C");
         yyaxis left;
-        plot(data.data(:,1), data.data(:,5), "LineWidth", 3, "Color", [0.3 1.0 0.3]);
-        plot(data.data(:,1), data.data(:,6), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
+        plot(data.data(:,1), data.data(:,5), "LineWidth", 3, "Color", [0.3 0.3 1.0]);
+        plot(data.data(:,1), data.data(:,6), "LineWidth", 3, "Color", [0.3 1.0 0.3],"LineStyle","-");
         %plot(data.data(:,1), data.data(:,5), "LineWidth", 3, "Color", [0.3 0.3 0.3],"LineStyle","-");
         %plot(data.data(:,1), data.data(:,6), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
         ylim([0 100]);
@@ -77,16 +77,16 @@ function PlotControlled(fileName)
         ax.YColor = 'r';
         ylabel("Temperature °C");
         yyaxis left;
-        plot(data.data(:,1), data.data(:,3), "LineWidth", 3, "Color", [0.3 1.0 0.3]);
-        plot(data.data(:,1), data.data(:,4), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
+        plot(data.data(:,1), data.data(:,3), "LineWidth", 3, "Color", [0.3 0.3 1.0]);
+        plot(data.data(:,1), data.data(:,4), "LineWidth", 3, "Color", [0.3 1.0 0.3],"LineStyle","-");
         plot(data.data(:,1), data.data(:,5), "LineWidth", 3, "Color", [0.3 0.3 0.3],"LineStyle","-");
         %plot(data.data(:,1), data.data(:,6), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
         ylim([0 100]);
         ylabel("%");
         ax.YColor = 'b';
         
-        AppendLegend("Xenon Concentration");
         AppendLegend("Iodine Concentration");
+        AppendLegend("Xenon Concentration");
         AppendLegend("Rod Position");
         %AppendLegend("Rod Command");
         AppendLegend("Core Temperature");
