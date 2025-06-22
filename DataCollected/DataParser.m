@@ -1,21 +1,108 @@
 clear; close all; clc;
-format longG;
+%format longG;
 
 period = 23.4;
 PlotFinalAnalisis([1.2237 -0.12052],[1 -1.2012 0.28657], period);
+
+PlotControlled("Controlled.csv");
 
 namostras = 25;
 ordem = 2;
 
 %PlotTestData('Step70.csv', 5:10:1000, ordem);
-%PlotTestData('Step75.csv', 5:10:1000, ordem);
+PlotTestData('Step75.csv', 5:10:1000, ordem);
 %PlotTestData('Step80.csv', 5:10:1000, ordem);
 
-%XenonPlot('XenonEffect.csv');
+XenonPlot('XenonEffect.csv');
 
 %main('Step70.csv', namostras, ordem);
 main('Step75.csv', namostras, ordem);
 %main('Step80.csv', namostras, ordem);
+
+function PlotControlled(fileName)
+    Legend = {};
+    data = importdata(fileName, ';', 1);
+    
+    % The input to the reactor is to remove bars from 100%, so the command
+    % at 80 means that 20 were removed. The next lines fix this inversion.
+    data.data(:,5) = 100-data.data(:,5);
+    data.data(:,6) = 100-data.data(:,6);
+
+    PlotTransitory();
+    PlotPermanent();
+
+    function PlotTransitory()
+        Legend = {};
+        figure();
+        hold on;
+        
+        yyaxis right;
+        plot(data.data(:,1), data.data(:,2), "LineWidth", 3, "Color", [1.0 0.3 0.3]);
+        ylim([0 450]);
+        ax = gca;
+        ax.YColor = 'r';
+        ylabel("Temperature °C");
+        yyaxis left;
+        plot(data.data(:,1), data.data(:,5), "LineWidth", 3, "Color", [0.3 1.0 0.3]);
+        plot(data.data(:,1), data.data(:,6), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
+        %plot(data.data(:,1), data.data(:,5), "LineWidth", 3, "Color", [0.3 0.3 0.3],"LineStyle","-");
+        %plot(data.data(:,1), data.data(:,6), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
+        ylim([0 100]);
+        ylabel("%");
+        ax.YColor = 'b';
+        
+        %AppendLegend("Xenon Concentration");
+        %AppendLegend("Iodine Concentration");
+        AppendLegend("Rod Position");
+        AppendLegend("Rod Command");
+        AppendLegend("Core Temperature");
+        xlabel("Time [ms]");
+        xlim([0 8e5])
+        title("Controlled core");
+        yyaxis right;
+    
+        fontsize(20,"points");
+        legend(Legend);
+    end
+
+    function PlotPermanent()
+        Legend = {};
+        figure();
+        hold on;
+        
+        yyaxis right;
+        plot(data.data(:,1), data.data(:,2), "LineWidth", 3, "Color", [1.0 0.3 0.3]);
+        ylim([0 450]);
+        ax = gca;
+        ax.YColor = 'r';
+        ylabel("Temperature °C");
+        yyaxis left;
+        plot(data.data(:,1), data.data(:,3), "LineWidth", 3, "Color", [0.3 1.0 0.3]);
+        plot(data.data(:,1), data.data(:,4), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
+        plot(data.data(:,1), data.data(:,5), "LineWidth", 3, "Color", [0.3 0.3 0.3],"LineStyle","-");
+        %plot(data.data(:,1), data.data(:,6), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
+        ylim([0 100]);
+        ylabel("%");
+        ax.YColor = 'b';
+        
+        AppendLegend("Xenon Concentration");
+        AppendLegend("Iodine Concentration");
+        AppendLegend("Rod Position");
+        %AppendLegend("Rod Command");
+        AppendLegend("Core Temperature");
+        xlabel("Time [ms]");
+        xlim([0 8e6])
+        title("Controlled core");
+        yyaxis right;
+    
+        fontsize(20,"points");
+        legend(Legend);
+    end
+
+    function AppendLegend(text)
+        Legend{size(Legend,1)+1,1} = text;
+    end
+end
 
 function PlotFinalAnalisis(num, den, period)
     Z = tf(num, den, period)
@@ -24,6 +111,17 @@ function PlotFinalAnalisis(num, den, period)
     disp("Poles: " + roots(den));
 
     S = d2c(Z)
+
+    Gfs = feedback(S,1)
+    figure();
+    margin(Gfs);
+    fontsize(20,"points");
+    set(findall(gcf, 'Type', 'Line'),'LineWidth',5);
+    set(findall(gcf, 'Type', 'Line'),'MarkerSize',20);
+
+    Z = c2d(S,10)
+    Gfz = feedback(Z,1);
+    pidTuner(Gfz);
 
     figure();
     rlocus(Z);
@@ -47,12 +145,8 @@ function PlotFinalAnalisis(num, den, period)
     % fontsize(20,"points");
     % pbaspect([1 1 1]);
     % daspect([1 1 1]);
-    % set(findall(gca, 'Type', 'Line'),'LineWidth',5);
-    % set(findall(gca, 'Type', 'Line'),'MarkerSize',20);
-
-    figure();
-    margin(Z);
-    fontsize(20,"points");
+    % set(findall(gcf, 'Type', 'Line'),'LineWidth',5);
+    % set(findall(gcf, 'Type', 'Line'),'MarkerSize',20);
 end
 
 function rmseError = testDataLMS(fileName, nSample, order)
