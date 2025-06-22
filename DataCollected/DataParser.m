@@ -1,20 +1,19 @@
 clear; close all; clc;
 %format longG;
 
-%period = 23.4;
-%PlotFinalAnalisis([1.2237 -0.12052],[1 -1.2012 0.28657], period);
+period = 23.4;
+PlotFinalAnalisis([1.2237 -0.12052],[1 -1.2012 0.28657], period);
 
 PlotControlled("Controlled.csv");
-return;
 
 namostras = 25;
 ordem = 2;
 
 %PlotTestData('Step70.csv', 5:10:1000, ordem);
-%PlotTestData('Step75.csv', 5:10:1000, ordem);
+PlotTestData('Step75.csv', 5:10:1000, ordem);
 %PlotTestData('Step80.csv', 5:10:1000, ordem);
 
-%XenonPlot('XenonEffect.csv');
+XenonPlot('XenonEffect.csv');
 
 %main('Step70.csv', namostras, ordem);
 main('Step75.csv', namostras, ordem);
@@ -26,39 +25,79 @@ function PlotControlled(fileName)
     
     % The input to the reactor is to remove bars from 100%, so the command
     % at 80 means that 20 were removed. The next lines fix this inversion.
-    data.data(:,3) = 100-data.data(:,3);
-    data.data(:,4) = 100-data.data(:,4);
+    data.data(:,5) = 100-data.data(:,5);
+    data.data(:,6) = 100-data.data(:,6);
 
-    figure();
-    hold on;
-    
-    yyaxis right;
-    plot(data.data(:,1), data.data(:,2), "LineWidth", 3, "Color", [1.0 0.3 0.3]);
-    ylim([0 450]);
-    ax = gca;
-    ax.YColor = 'r';
-    ylabel("Temperature °C");
-    yyaxis left;
-    plot(data.data(:,1), data.data(:,3), "LineWidth", 3, "Color", [0.3 1.0 0.3]);
-    plot(data.data(:,1), data.data(:,4), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
-    %plot(data.data(:,1), data.data(:,5), "LineWidth", 3, "Color", [0.3 0.3 0.3],"LineStyle","-");
-    %plot(data.data(:,1), data.data(:,6), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
-    ylim([0 100]);
-    ylabel("%");
-    ax.YColor = 'b';
-    
-    %AppendLegend("Xenon Concentration");
-    %AppendLegend("Iodine Concentration");
-    AppendLegend("Rod Position");
-    AppendLegend("Rod Command");
-    AppendLegend("Core Temperature");
-    xlabel("Time [ms]");
-    xlim([0 8e5])
-    title("Controlled core");
-    yyaxis right;
+    PlotTransitory();
+    PlotPermanent();
 
-    fontsize(20,"points");
-    legend(Legend);
+    function PlotTransitory()
+        Legend = {};
+        figure();
+        hold on;
+        
+        yyaxis right;
+        plot(data.data(:,1), data.data(:,2), "LineWidth", 3, "Color", [1.0 0.3 0.3]);
+        ylim([0 450]);
+        ax = gca;
+        ax.YColor = 'r';
+        ylabel("Temperature °C");
+        yyaxis left;
+        plot(data.data(:,1), data.data(:,5), "LineWidth", 3, "Color", [0.3 1.0 0.3]);
+        plot(data.data(:,1), data.data(:,6), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
+        %plot(data.data(:,1), data.data(:,5), "LineWidth", 3, "Color", [0.3 0.3 0.3],"LineStyle","-");
+        %plot(data.data(:,1), data.data(:,6), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
+        ylim([0 100]);
+        ylabel("%");
+        ax.YColor = 'b';
+        
+        %AppendLegend("Xenon Concentration");
+        %AppendLegend("Iodine Concentration");
+        AppendLegend("Rod Position");
+        AppendLegend("Rod Command");
+        AppendLegend("Core Temperature");
+        xlabel("Time [ms]");
+        xlim([0 8e5])
+        title("Controlled core");
+        yyaxis right;
+    
+        fontsize(20,"points");
+        legend(Legend);
+    end
+
+    function PlotPermanent()
+        Legend = {};
+        figure();
+        hold on;
+        
+        yyaxis right;
+        plot(data.data(:,1), data.data(:,2), "LineWidth", 3, "Color", [1.0 0.3 0.3]);
+        ylim([0 450]);
+        ax = gca;
+        ax.YColor = 'r';
+        ylabel("Temperature °C");
+        yyaxis left;
+        plot(data.data(:,1), data.data(:,3), "LineWidth", 3, "Color", [0.3 1.0 0.3]);
+        plot(data.data(:,1), data.data(:,4), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
+        plot(data.data(:,1), data.data(:,5), "LineWidth", 3, "Color", [0.3 0.3 0.3],"LineStyle","-");
+        %plot(data.data(:,1), data.data(:,6), "LineWidth", 3, "Color", [0.3 0.3 1.0],"LineStyle","-");
+        ylim([0 100]);
+        ylabel("%");
+        ax.YColor = 'b';
+        
+        AppendLegend("Xenon Concentration");
+        AppendLegend("Iodine Concentration");
+        AppendLegend("Rod Position");
+        %AppendLegend("Rod Command");
+        AppendLegend("Core Temperature");
+        xlabel("Time [ms]");
+        xlim([0 8e6])
+        title("Controlled core");
+        yyaxis right;
+    
+        fontsize(20,"points");
+        legend(Legend);
+    end
 
     function AppendLegend(text)
         Legend{size(Legend,1)+1,1} = text;
@@ -73,27 +112,12 @@ function PlotFinalAnalisis(num, den, period)
 
     S = d2c(Z)
 
-    %TEMP
-    %s = tf('s');
-    %S = (0.54697 + 0.0030573/s + 6.235*s)*S
-    %TEMP
-
     Gfs = feedback(S,1)
     figure();
     margin(Gfs);
     fontsize(20,"points");
     set(findall(gcf, 'Type', 'Line'),'LineWidth',5);
     set(findall(gcf, 'Type', 'Line'),'MarkerSize',20);
-
-    figure();
-    rlocus(Gfs);hold on;
-    scatter(-0.0383764, 0.0464558, 'x', 'red');
-    pbaspect([1 1 1]);
-    daspect([1 1 1]);
-    fontsize(20,"points");
-    set(findall(gcf, 'Type', 'Line'),'LineWidth',5);
-    set(findall(gcf, 'Type', 'Line'),'MarkerSize',20);
-    set(findall(gcf, 'Type', 'Marker'),'MarkerSize',20);
 
     Z = c2d(S,10)
     Gfz = feedback(Z,1);
@@ -123,12 +147,6 @@ function PlotFinalAnalisis(num, den, period)
     % daspect([1 1 1]);
     % set(findall(gcf, 'Type', 'Line'),'LineWidth',5);
     % set(findall(gcf, 'Type', 'Line'),'MarkerSize',20);
-
-    figure();
-    margin(Z);
-    fontsize(20,"points");
-    set(findall(gcf, 'Type', 'Line'),'LineWidth',5);
-    set(findall(gcf, 'Type', 'Line'),'MarkerSize',20);
 end
 
 function rmseError = testDataLMS(fileName, nSample, order)
