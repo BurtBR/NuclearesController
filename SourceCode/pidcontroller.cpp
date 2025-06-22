@@ -26,7 +26,7 @@ double PIDController::Calculate(double error){
     _sumError += error;
 
     _P = error*_Kp;
-    _I = (_sumError+error)*_Ki;
+    _I = _sumError*_Ki;
     _D = _Kd*de;
 
     if(abs(_I) > _integralLimit){
