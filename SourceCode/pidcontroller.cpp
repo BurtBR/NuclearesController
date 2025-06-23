@@ -12,6 +12,12 @@ PIDController::PIDController(double Kp, double Ki, double Kd, double integralLim
 
 double PIDController::Calculate(double error){
 
+    if(!_init){
+        _init = true;
+        _lastError = error;
+        return 0.0;
+    }
+
     double de = error - _lastError;
 
     if(error > 0 && _wasNegative){
@@ -39,11 +45,7 @@ double PIDController::Calculate(double error){
         }
     }
 
-    if(_init)
-        return (_P + _I + _D);
-
-    _init = true;
-    return 0.0;
+    return (_P + _I + _D);
 }
 
 void PIDController::Reset(){

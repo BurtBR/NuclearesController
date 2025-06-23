@@ -60,7 +60,8 @@ public:
         STEAM_TURBINE_2_PRESSURE,
         STEAM_TURBINE_0_TEMPERATURE,
         STEAM_TURBINE_1_TEMPERATURE,
-        STEAM_TURBINE_2_TEMPERATURE
+        STEAM_TURBINE_2_TEMPERATURE,
+        WEBSERVER_BATCH_GET
     };
 
     static const QMap<QString,NuclearVariable> _variablesNames;
@@ -100,7 +101,6 @@ private:
     void SetCoreTemperatureButtonGreen();
     void StartController();
     void StopController();
-    void ControlPlant();
 
     void PostRequest(QString variable, QString value);
     void GetRequest(QString variable);

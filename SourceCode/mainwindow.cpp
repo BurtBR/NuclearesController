@@ -2,6 +2,8 @@
 #include "./ui_mainwindow.h"
 
 #include <QDateTime>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QScrollBar>
 #include "workerdatacollections.h"
 
@@ -42,7 +44,8 @@ const QMap<QString, MainWindow::NuclearVariable> MainWindow::_variablesNames = {
     {"STEAM_TURBINE_2_PRESSURE", STEAM_TURBINE_2_PRESSURE},
     {"STEAM_TURBINE_0_TEMPERATURE", STEAM_TURBINE_0_TEMPERATURE},
     {"STEAM_TURBINE_1_TEMPERATURE", STEAM_TURBINE_1_TEMPERATURE},
-    {"STEAM_TURBINE_2_TEMPERATURE", STEAM_TURBINE_2_TEMPERATURE}
+    {"STEAM_TURBINE_2_TEMPERATURE", STEAM_TURBINE_2_TEMPERATURE},
+    {"WEBSERVER_BATCH_GET", WEBSERVER_BATCH_GET}
 };
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainWindow){
@@ -381,26 +384,6 @@ void MainWindow::StopController(){
     SetPressureButtonRed(2);
 }
 
-void MainWindow::ControlPlant(){
-    if(_ui->checkEnableSteam->isChecked()){
-        GetRequest("STEAM_GEN_0_OUTLET");
-        GetRequest("STEAM_GEN_1_OUTLET");
-        GetRequest("STEAM_GEN_2_OUTLET");
-    }
-
-    if(_ui->checkEnableEnergyPID->isChecked()){
-        GetRequest("POWER_DEMAND_MW");
-    }
-
-    if(_ui->checkEnableRodControl->isChecked()){
-        GetRequest("CORE_TEMP");
-    }
-
-    if(_ui->checkEnablePressureController->isChecked()){
-        GetRequest("");
-    }
-}
-
 void MainWindow::PostRequest(QString variable, QString value){
     QNetworkRequest request;
     QUrl url("http://" + _ui->lineIP->text() + "/?variable="+ variable +"&value=" + value);
@@ -457,22 +440,22 @@ void MainWindow::On_buttonStartDataCollection_Clicked(){
         }
 
         if(_ui->checkCollectRealtime->isChecked())
-            worker->AddVariable(NuclearVariable::REALCURRENTTIME);
+            worker->AddVariable("REALCURRENTTIME");
 
         if(_ui->checkCollectCoreTemperature->isChecked())
-            worker->AddVariable(NuclearVariable::CORE_TEMP);
+            worker->AddVariable("CORE_TEMP");
 
         if(_ui->checkCollectRodsCommanded->isChecked())
-            worker->AddVariable(NuclearVariable::ROD_BANK_POS_0_ORDERED);
+            worker->AddVariable("ROD_BANK_POS_0_ORDERED");
 
         if(_ui->checkCollectRodsPosition->isChecked())
-            worker->AddVariable(NuclearVariable::RODS_POS_ACTUAL);
+            worker->AddVariable("RODS_POS_ACTUAL");
 
         if(_ui->checkCollectCumulativeIodine->isChecked())
-            worker->AddVariable(NuclearVariable::CORE_IODINE_CUMULATIVE);
+            worker->AddVariable("CORE_IODINE_CUMULATIVE");
 
         if(_ui->checkCollectCumulativeXenon->isChecked())
-            worker->AddVariable(NuclearVariable::CORE_XENON_CUMULATIVE);
+            worker->AddVariable("CORE_XENON_CUMULATIVE");
 
         connect(_threadDataCollection, &QThread::finished, worker, &WorkerDataCollections::deleteLater);
 
@@ -621,171 +604,25 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
         return;
     }
 
-    QStringList query = reply->url().query().split('=');
-
-    if(query.size() != 2){
-        reply->deleteLater();
-        return;
-    }else if(!_variablesNames.contains(query.at(1))){
+    if(!reply->size()){
         reply->deleteLater();
         return;
     }
 
-    switch(_variablesNames[query.at(1)]){
+    QJsonObject json = QJsonDocument::fromJson(reply->readAll()).object()["values"].toObject();
 
-    case NuclearVariable::TIME:
-        _ui->labelTime->setText(reply->readAll());
-        GetRequest("GAME_SIM_SPEED");
-        break;
+    _ui->labelTime->setText(json["TIME"].toString());
 
-    case NuclearVariable::GAME_SIM_SPEED:{
-        int gamespeed = reply->readAll().toInt();
-
-        if(_lastGameSpeed != gamespeed){
-            _lastGameSpeed = gamespeed;
-            switch(_lastGameSpeed){
-            case 1:
-                emit TimerStart(_ui->spinPeriod->value());
-                break;
-            case 2:
-                emit TimerStart(_ui->spinPeriod->value()/_TIMERDIVIDER_X2);
-                break;
-            case 4:
-                emit TimerStart(_ui->spinPeriod->value()/_TIMERDIVIDER_X3);
-                break;
-            default:
-                break;
-            }
-        }
-
-        switch(gamespeed){
-        case 1:
-            if(_ui->checkWorkX1->isChecked()){
-                ControlPlant();
-            }
-            break;
-        case 2:
-            if(_ui->checkWorkX2->isChecked()){
-                ControlPlant();
-            }
-            break;
-        case 4:
-            if(_ui->checkWorkX3->isChecked()){
-                ControlPlant();
-            }
-            break;
-        default:
-            break;
-        }
-    }break;
-
-    case NuclearVariable::CORE_TEMP:
-        _coreTemp = reply->readAll().toDouble();
-        _ui->lcdCoreTemp->display(_coreTemp);
-        GetRequest("RODS_POS_ACTUAL");
-        GetRequest("CORE_STATE_CRITICALITY");
-        break;
-    case NuclearVariable::RODS_POS_ACTUAL:
-        _rodsActual = reply->readAll().toDouble();
-        _ui->lcdRodPosition->display(_rodsActual);
-        OrderRods();
-        break;
-
-    case NuclearVariable::CORE_STATE_CRITICALITY:
-        _ui->lcdReactivity->display(reply->readAll().toDouble());
-        break;
-
-    case NuclearVariable::POWER_DEMAND_MW:
-        _requiredPower = reply->readAll().toDouble();
-        _ui->lcdReqPower->display(_requiredPower);
-        GetRequest("GENERATOR_0_KW");
-        break;
-    case NuclearVariable::GENERATOR_0_KW:
-        _generatedPower = reply->readAll().toDouble()/1000.0;
-        GetRequest("GENERATOR_1_KW");
-        break;
-    case NuclearVariable::GENERATOR_1_KW:
-        _generatedPower += (reply->readAll().toDouble()/1000.0);
-        GetRequest("GENERATOR_2_KW");
-        break;
-    case NuclearVariable::GENERATOR_2_KW:
-        _generatedPower += (reply->readAll().toDouble()/1000.0);
-        GetRequest("COOLANT_CORE_FLOW_SPEED");
-        break;
-    case NuclearVariable::COOLANT_CORE_FLOW_SPEED:
-        _corePump = reply->readAll().toDouble();
-        _ui->lcdGenPower->display(_generatedPower);
-        _ui->lcdCorePump->display(_corePump);
-        OrderCorePump();
-        break;
-    case NuclearVariable::COOLANT_CORE_FLOW_ORDERED_SPEED:
-        break;
-
-    case NuclearVariable::STEAM_GEN_0_OUTLET:
-        _steamOutlet[0] = reply->readAll().toFloat();
-        _ui->lcd_L1_Steam->display(_steamOutlet[0]);
-        if(_steamOutlet[0] || _secCoolFlow[0])
-            GetRequest("COOLANT_SEC_CIRCULATION_PUMP_0_SPEED");
-        break;
-    case NuclearVariable::STEAM_GEN_1_OUTLET:
-        _steamOutlet[1] = reply->readAll().toFloat();
-        _ui->lcd_L2_Steam->display(_steamOutlet[1]);
-        if(_steamOutlet[1] || _secCoolFlow[1])
-            GetRequest("COOLANT_SEC_CIRCULATION_PUMP_1_SPEED");
-        break;
-    case NuclearVariable::STEAM_GEN_2_OUTLET:
-        _steamOutlet[2] = reply->readAll().toFloat();
-        _ui->lcd_L3_Steam->display(_steamOutlet[2]);
-        if(_steamOutlet[2] || _secCoolFlow[2])
-            GetRequest("COOLANT_SEC_CIRCULATION_PUMP_2_SPEED");
-        break;
-
-
-    case NuclearVariable::COOLANT_SEC_CIRCULATION_PUMP_0_SPEED:
-        _secCoolFlow[0] = reply->readAll().toFloat();
-        _ui->lcd_L1_Valve->display(_secCoolFlow[0]);
-        GetRequest("COOLANT_SEC_0_VOLUME");
-        break;
-    case NuclearVariable::COOLANT_SEC_CIRCULATION_PUMP_1_SPEED:
-        _secCoolFlow[1] = reply->readAll().toFloat();
-        _ui->lcd_L2_Valve->display(_secCoolFlow[1]);
-        GetRequest("COOLANT_SEC_1_VOLUME");
-        break;
-    case NuclearVariable::COOLANT_SEC_CIRCULATION_PUMP_2_SPEED:
-        _secCoolFlow[2] = reply->readAll().toFloat();
-        _ui->lcd_L3_Valve->display(_secCoolFlow[2]);
-        GetRequest("COOLANT_SEC_2_VOLUME");
-        break;
-
-    case NuclearVariable::COOLANT_SEC_0_VOLUME:
-        _coolantVolume[0] = reply->readAll().toFloat();
-        _ui->lcdl_L1_Coolant->display(_coolantVolume[0]);
-        OrderSteamFlow(0);
-        break;
-    case NuclearVariable::COOLANT_SEC_1_VOLUME:
-        _coolantVolume[1] = reply->readAll().toFloat();
-        _ui->lcdl_L2_Coolant->display(_coolantVolume[1]);
-        OrderSteamFlow(1);
-        break;
-    case NuclearVariable::COOLANT_SEC_2_VOLUME:
-        _coolantVolume[2] = reply->readAll().toFloat();
-        _ui->lcdl_L3_Coolant->display(_coolantVolume[2]);
-        OrderSteamFlow(2);
-        break;
-
-    case NuclearVariable::COOLANT_SEC_CIRCULATION_PUMP_0_ORDERED_SPEED:
-        break;
-    case NuclearVariable::COOLANT_SEC_CIRCULATION_PUMP_1_ORDERED_SPEED:
-        break;
-    case NuclearVariable::COOLANT_SEC_CIRCULATION_PUMP_2_ORDERED_SPEED:
-        break;
-    default:
-        break;
-    }
+    _coreTemp = json["CORE_TEMP"].toDouble();
+    _ui->lcdCoreTemp->display(_coreTemp);
+    _rodsActual = json["RODS_POS_ACTUAL"].toDouble();
+    _ui->lcdRodPosition->display(_rodsActual);
+    _ui->lcdReactivity->display(json["CORE_STATE_CRITICALITY"].toDouble());
+    OrderRods();
 
     reply->deleteLater();
 }
 
 void MainWindow::Timeout(){
-    GetRequest("TIME");
+    GetRequest("WEBSERVER_BATCH_GET");
 }
