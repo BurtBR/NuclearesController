@@ -177,7 +177,7 @@ color: white;</string>
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabOptions">
        <attribute name="title">
@@ -570,7 +570,7 @@ color: white;</string>
               </widget>
              </item>
              <item>
-              <widget class="QLCDNumber" name="lcdl_L1_Coolant">
+              <widget class="QLCDNumber" name="lcd_L1_Coolant">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                  <horstretch>0</horstretch>
@@ -777,7 +777,7 @@ color: white;</string>
               </widget>
              </item>
              <item>
-              <widget class="QLCDNumber" name="lcdl_L2_Coolant">
+              <widget class="QLCDNumber" name="lcd_L2_Coolant">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                  <horstretch>0</horstretch>
@@ -1153,7 +1153,7 @@ color: white;</string>
               </widget>
              </item>
              <item>
-              <widget class="QLCDNumber" name="lcdl_L3_Coolant">
+              <widget class="QLCDNumber" name="lcd_L3_Coolant">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                  <horstretch>0</horstretch>
@@ -1310,7 +1310,7 @@ color: white;</string>
              <double>0.001000000000000</double>
             </property>
             <property name="value">
-             <double>0.000100000000000</double>
+             <double>0.000500000000000</double>
             </property>
            </widget>
           </item>
@@ -1356,7 +1356,7 @@ color: white;</string>
              <double>0.000100000000000</double>
             </property>
             <property name="value">
-             <double>0.001000000000000</double>
+             <double>0.030000000000000</double>
             </property>
            </widget>
           </item>
@@ -1393,7 +1393,7 @@ color: white;</string>
              <number>48000</number>
             </property>
             <property name="value">
-             <number>27000</number>
+             <number>30000</number>
             </property>
            </widget>
           </item>
@@ -1403,7 +1403,7 @@ color: white;</string>
              <string>Enable Steam Controller</string>
             </property>
             <property name="checked">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
            </widget>
           </item>

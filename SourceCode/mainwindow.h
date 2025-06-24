@@ -75,7 +75,6 @@ private:
     PIDController _energyPID = PIDController(0 ,0 ,0 , 0.5), _rodPID = PIDController(0, 0, 0, 0.1);
 
     QVector<PIDController> _steamPID = {PIDController(0,0,0,0.5), PIDController(0,0,0,0.5), PIDController(0,0,0,0.5)};
-    QVector<double> _steamOutlet = {0,0,0}, _coolantVolume = {0,0,0}, _secCoolFlow = {0,0,0};
 
     QVector<PIDController> _pressurePID = {PIDController(), PIDController(), PIDController()};
 
@@ -85,7 +84,7 @@ private:
     void DeleteThread(QThread **thread);
     void OrderRods(double rodPosition, double coreTemp);
     void OrderCorePump();
-    void OrderSteamFlow(int number);
+    void OrderSteamFlow(int number, double valve, double volume);
     void OrderPressure(int number, double valve, double pressure);
     void SetSteamButtonRed(int number);
     void SetSteamButtonGreen(int number);

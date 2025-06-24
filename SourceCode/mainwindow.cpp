@@ -210,13 +210,9 @@ void MainWindow::OrderCorePump(){
     _ui->lcdPID_PowerD->display(_energyPID.GetD());
 }
 
-void MainWindow::OrderSteamFlow(int number){
-    int newflow;
-    int error = _ui->spinGenVolumeTarget->value()-_coolantVolume[number];
-
-    double command = _steamPID[number].Calculate(error);
-
-    newflow = qRound(command + _secCoolFlow[number]);
+void MainWindow::OrderSteamFlow(int number, double valve, double volume){
+    double pidResult = _steamPID[number].Calculate(_ui->spinGenVolumeTarget->value() - volume);
+    int newflow = valve + pidResult;
 
     if(newflow < _ui->spinSteamFlowMin->value()){
         newflow = _ui->spinSteamFlowMin->value();
@@ -226,8 +222,7 @@ void MainWindow::OrderSteamFlow(int number){
         _steamPID[number].ResetSum();
     }
 
-    if(newflow != _secCoolFlow[number]){
-        _secCoolFlow[number] = newflow;
+    if(newflow != valve){
         PostRequest("COOLANT_SEC_CIRCULATION_PUMP_"+QString::number(number)+"_ORDERED_SPEED", QString::number(newflow));
     }
 
@@ -681,6 +676,35 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
             _ui->lcd_L3_Pres_Valve->display(actuator);
             _ui->lcd_L3_Pres_Pres->display(sensor);
             OrderPressure(2, actuator, sensor);
+        }
+    }
+
+    if(_ui->checkEnableSteam->isChecked()){
+        if(json["STEAM_GEN_0_STATUS"].toInt() ==2){
+            sensor = json["COOLANT_SEC_CIRCULATION_PUMP_0_SPEED"].toDouble();
+            actuator = json["COOLANT_SEC_0_LIQUID_VOLUME"].toDouble();
+            _ui->lcd_L1_Steam->display(json["STEAM_GEN_0_OUTLET"].toDouble());
+            _ui->lcd_L1_Coolant->display(actuator);
+            _ui->lcd_L1_Coolant->display(sensor);
+            OrderSteamFlow(0, actuator, sensor);
+        }
+
+        if(json["STEAM_GEN_1_STATUS"].toInt() ==2){
+            actuator = json["COOLANT_SEC_CIRCULATION_PUMP_1_SPEED"].toDouble();
+            sensor = json["COOLANT_SEC_1_LIQUID_VOLUME"].toDouble();
+            _ui->lcd_L2_Steam->display(json["STEAM_GEN_1_OUTLET"].toDouble());
+            _ui->lcd_L2_Coolant->display(actuator);
+            _ui->lcd_L2_Coolant->display(sensor);
+            OrderSteamFlow(1, actuator, sensor);
+        }
+
+        if(json["STEAM_GEN_2_STATUS"].toInt() ==2){
+            actuator = json["COOLANT_SEC_CIRCULATION_PUMP_2_SPEED"].toDouble();
+            sensor = json["COOLANT_SEC_2_LIQUID_VOLUME"].toDouble();
+            _ui->lcd_L3_Steam->display(json["STEAM_GEN_2_OUTLET"].toDouble());
+            _ui->lcd_L3_Valve->display(actuator);
+            _ui->lcd_L3_Coolant->display(sensor);
+            OrderSteamFlow(2, actuator, sensor);
         }
     }
 
