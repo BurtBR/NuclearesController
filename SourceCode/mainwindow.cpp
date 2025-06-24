@@ -102,8 +102,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 
     // TEMPORARILY HIDDEN
     _ui->tabWidget->removeTab(1);
-    _ui->tabWidget->removeTab(1);
-    _ui->tabWidget->removeTab(1);
+    _ui->tabWidget->removeTab(2);
 }
 
 MainWindow::~MainWindow(){
@@ -177,7 +176,6 @@ void MainWindow::OrderRods(double rodPosition, double coreTemp){
     }
 
     if(newHeight != rodPosition){
-        rodPosition = newHeight;
         PostRequest("RODS_ALL_POS_ORDERED", QString::number(newHeight));
     }
 
@@ -257,8 +255,43 @@ void MainWindow::OrderSteamFlow(int number){
     }
 }
 
-void MainWindow::OrderPressure(int number){
+void MainWindow::OrderPressure(int number, double valve, double pressure){
+    double pidResult = _pressurePID[number].Calculate(pressure - _ui->spinPressureTarget->value());
+    double newPosition = valve + pidResult;
 
+    if(newPosition > _ui->spinPressureValveMax->value()){
+        newPosition = _ui->spinPressureValveMax->value();
+        _pressurePID[number].ResetSum();
+    }else if(newPosition < _ui->spinPressureValveMin->value()){
+        newPosition = _ui->spinPressureValveMin->value();
+        _pressurePID[number].ResetSum();
+    }
+
+    if(newPosition != valve){
+        PostRequest("MSCV_" + QString::number(number) + "_OPENING_ORDERED", QString::number(newPosition));
+    }
+
+    SetPressureButtonGreen(number);
+
+    switch(number){
+    case 0:
+        _ui->lcd_L1_Pres_P->display(_pressurePID[number].GetP());
+        _ui->lcd_L1_Pres_I->display(_pressurePID[number].GetI());
+        _ui->lcd_L1_Pres_D->display(_pressurePID[number].GetD());
+        break;
+    case 1:
+        _ui->lcd_L2_Pres_P->display(_pressurePID[number].GetP());
+        _ui->lcd_L2_Pres_I->display(_pressurePID[number].GetI());
+        _ui->lcd_L2_Pres_D->display(_pressurePID[number].GetD());
+        break;
+    case 2:
+        _ui->lcd_L3_Pres_P->display(_pressurePID[number].GetP());
+        _ui->lcd_L3_Pres_I->display(_pressurePID[number].GetI());
+        _ui->lcd_L3_Pres_D->display(_pressurePID[number].GetD());
+        break;
+    default:
+        break;
+    }
 }
 
 void MainWindow::SetSteamButtonRed(int number){
@@ -610,17 +643,46 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
     }
 
     QJsonObject json = QJsonDocument::fromJson(reply->readAll()).object()["values"].toObject();
-    double coreTemp, rodsPosition;
+    double actuator, sensor;
 
     _ui->labelTime->setText(json["TIME"].toString());
 
     if(_ui->checkEnableRodControl->isChecked()){
-        coreTemp = json["CORE_TEMP"].toDouble();
-        _ui->lcdCoreTemp->display(coreTemp);
-        rodsPosition = json["RODS_POS_ACTUAL"].toDouble();
-        _ui->lcdRodPosition->display(rodsPosition);
+        sensor = json["CORE_TEMP"].toDouble();
+        _ui->lcdCoreTemp->display(sensor);
+        actuator = json["RODS_POS_ACTUAL"].toDouble();
+        _ui->lcdRodPosition->display(actuator);
         _ui->lcdReactivity->display(json["CORE_STATE_CRITICALITY"].toDouble());
-        OrderRods(rodsPosition, coreTemp);
+        OrderRods(actuator, sensor);
+    }
+
+    if(_ui->checkEnablePressureController->isChecked()){
+        if(json["STEAM_GEN_0_STATUS"].toInt() ==2){
+            sensor = json["STEAM_TURBINE_0_PRESSURE"].toDouble();
+            actuator = json["MSCV_0_OPENING_ACTUAL"].toDouble();
+            _ui->lcd_L1_Pres_Temp->display(json["STEAM_TURBINE_0_TEMPERATURE"].toDouble());
+            _ui->lcd_L1_Pres_Valve->display(actuator);
+            _ui->lcd_L1_Pres_Pres->display(sensor);
+            OrderPressure(0, actuator, sensor);
+        }
+
+        if(json["STEAM_GEN_1_STATUS"].toInt() ==2){
+            actuator = json["MSCV_1_OPENING_ACTUAL"].toDouble();
+            sensor = json["STEAM_TURBINE_1_PRESSURE"].toDouble();
+            _ui->lcd_L2_Pres_Temp->display(json["STEAM_TURBINE_1_TEMPERATURE"].toDouble());
+            _ui->lcd_L2_Pres_Valve->display(actuator);
+            _ui->lcd_L2_Pres_Pres->display(sensor);
+            OrderPressure(1, actuator, sensor);
+        }
+
+        if(json["STEAM_GEN_2_STATUS"].toInt() ==2){
+            actuator = json["MSCV_2_OPENING_ACTUAL"].toDouble();
+            sensor = json["STEAM_TURBINE_2_PRESSURE"].toDouble();
+            _ui->lcd_L3_Pres_Temp->display(json["STEAM_TURBINE_2_TEMPERATURE"].toDouble());
+            _ui->lcd_L3_Pres_Valve->display(actuator);
+            _ui->lcd_L3_Pres_Pres->display(sensor);
+            OrderPressure(2, actuator, sensor);
+        }
     }
 
     reply->deleteLater();

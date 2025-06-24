@@ -177,7 +177,7 @@ color: white;</string>
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tabOptions">
        <attribute name="title">
@@ -2366,7 +2366,7 @@ QLabel{
              <number>100</number>
             </property>
             <property name="value">
-             <number>4</number>
+             <number>3</number>
             </property>
            </widget>
           </item>

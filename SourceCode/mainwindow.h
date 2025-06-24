@@ -78,17 +78,15 @@ private:
     QVector<double> _steamOutlet = {0,0,0}, _coolantVolume = {0,0,0}, _secCoolFlow = {0,0,0};
 
     QVector<PIDController> _pressurePID = {PIDController(), PIDController(), PIDController()};
-    QVector<double> _pressure = {0.0,0.0,0.0}, _pressureTemp = {0.0,0.0,0.0}, _pressureValve = {0.0,0.0,0.0};
 
     double _requiredPower = 0, _generatedPower = 0;
     int _corePump = 0, _lastGameSpeed = 1;
-    uint32_t _lastTime = 0;
 
     void DeleteThread(QThread **thread);
     void OrderRods(double rodPosition, double coreTemp);
     void OrderCorePump();
     void OrderSteamFlow(int number);
-    void OrderPressure(int number);
+    void OrderPressure(int number, double valve, double pressure);
     void SetSteamButtonRed(int number);
     void SetSteamButtonGreen(int number);
     void SetPressureButtonRed(int number);
