@@ -222,7 +222,7 @@ color: white;</string>
              <number>1000000</number>
             </property>
             <property name="value">
-             <number>10000</number>
+             <number>1000</number>
             </property>
            </widget>
           </item>
@@ -3185,7 +3185,7 @@ color: white;</string>
              <double>10.000000000000000</double>
             </property>
             <property name="value">
-             <double>0.361900000000000</double>
+             <double>0.036190000000000</double>
             </property>
            </widget>
           </item>
@@ -3208,7 +3208,7 @@ color: white;</string>
              <double>10.000000000000000</double>
             </property>
             <property name="value">
-             <double>0.034690000000000</double>
+             <double>0.003469000000000</double>
             </property>
            </widget>
           </item>
@@ -3231,7 +3231,7 @@ color: white;</string>
              <double>100.000000000000000</double>
             </property>
             <property name="value">
-             <double>0.944000000000000</double>
+             <double>2.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -3245,7 +3245,7 @@ color: white;</string>
           <item>
            <widget class="QDoubleSpinBox" name="spinIntegralMaximumRods">
             <property name="value">
-             <double>99.000000000000000</double>
+             <double>5.000000000000000</double>
             </property>
            </widget>
           </item>

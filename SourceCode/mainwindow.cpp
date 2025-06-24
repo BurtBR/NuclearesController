@@ -164,9 +164,9 @@ void MainWindow::ConsoleMessage(QString msg, ConsoleMessageType type){
     _ui->textConsole->verticalScrollBar()->setValue(_ui->textConsole->verticalScrollBar()->maximum());
 }
 
-void MainWindow::OrderRods(){
-    double pidResult = _rodPID.Calculate(_coreTemp - _ui->spinTemperatureTarget->value());
-    double newHeight = (_rodsActual + pidResult);
+void MainWindow::OrderRods(double rodPosition, double coreTemp){
+    double pidResult = _rodPID.Calculate(coreTemp - _ui->spinTemperatureTarget->value());
+    double newHeight = (rodPosition + pidResult);
 
     if(newHeight > _ui->spinRodMax->value()){
         newHeight = _ui->spinRodMax->value();
@@ -176,8 +176,8 @@ void MainWindow::OrderRods(){
         _rodPID.ResetSum();
     }
 
-    if(newHeight != _rodsActual){
-        _rodsActual = newHeight;
+    if(newHeight != rodPosition){
+        rodPosition = newHeight;
         PostRequest("RODS_ALL_POS_ORDERED", QString::number(newHeight));
     }
 
@@ -610,15 +610,18 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
     }
 
     QJsonObject json = QJsonDocument::fromJson(reply->readAll()).object()["values"].toObject();
+    double coreTemp, rodsPosition;
 
     _ui->labelTime->setText(json["TIME"].toString());
 
-    _coreTemp = json["CORE_TEMP"].toDouble();
-    _ui->lcdCoreTemp->display(_coreTemp);
-    _rodsActual = json["RODS_POS_ACTUAL"].toDouble();
-    _ui->lcdRodPosition->display(_rodsActual);
-    _ui->lcdReactivity->display(json["CORE_STATE_CRITICALITY"].toDouble());
-    OrderRods();
+    if(_ui->checkEnableRodControl->isChecked()){
+        coreTemp = json["CORE_TEMP"].toDouble();
+        _ui->lcdCoreTemp->display(coreTemp);
+        rodsPosition = json["RODS_POS_ACTUAL"].toDouble();
+        _ui->lcdRodPosition->display(rodsPosition);
+        _ui->lcdReactivity->display(json["CORE_STATE_CRITICALITY"].toDouble());
+        OrderRods(rodsPosition, coreTemp);
+    }
 
     reply->deleteLater();
 }
