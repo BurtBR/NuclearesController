@@ -78,12 +78,9 @@ private:
 
     QVector<PIDController> _pressurePID = {PIDController(), PIDController(), PIDController()};
 
-    double _requiredPower = 0, _generatedPower = 0;
-    int _corePump = 0, _lastGameSpeed = 1;
-
     void DeleteThread(QThread **thread);
     void OrderRods(double rodPosition, double coreTemp);
-    void OrderCorePump();
+    void OrderCorePump(double pump, double generated, double required);
     void OrderSteamFlow(int number, double valve, double volume);
     void OrderPressure(int number, double valve, double pressure);
     void SetSteamButtonRed(int number);

@@ -1310,7 +1310,7 @@ color: white;</string>
              <double>0.001000000000000</double>
             </property>
             <property name="value">
-             <double>0.000500000000000</double>
+             <double>0.300000000000000</double>
             </property>
            </widget>
           </item>
@@ -1333,7 +1333,7 @@ color: white;</string>
              <double>0.000100000000000</double>
             </property>
             <property name="value">
-             <double>0.000010000000000</double>
+             <double>0.001000000000000</double>
             </property>
            </widget>
           </item>
@@ -1356,7 +1356,7 @@ color: white;</string>
              <double>0.000100000000000</double>
             </property>
             <property name="value">
-             <double>0.030000000000000</double>
+             <double>0.300000000000000</double>
             </property>
            </widget>
           </item>
@@ -1382,18 +1382,15 @@ color: white;</string>
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="spinGenVolumeTarget">
+           <widget class="QDoubleSpinBox" name="spinGenVolumeTarget">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
-            <property name="minimum">
-             <number>12000</number>
-            </property>
             <property name="maximum">
-             <number>48000</number>
+             <double>60.000000000000000</double>
             </property>
             <property name="value">
-             <number>30000</number>
+             <double>30.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -2783,7 +2780,7 @@ color: white;</string>
              <number>100</number>
             </property>
             <property name="value">
-             <number>100</number>
+             <number>49</number>
             </property>
            </widget>
           </item>
@@ -2809,7 +2806,7 @@ color: white;</string>
              <double>0.000010000000000</double>
             </property>
             <property name="value">
-             <double>0.010000000000000</double>
+             <double>0.100000000000000</double>
             </property>
            </widget>
           </item>
@@ -2835,7 +2832,7 @@ color: white;</string>
              <double>0.000010000000000</double>
             </property>
             <property name="value">
-             <double>0.001000000000000</double>
+             <double>0.010000000000000</double>
             </property>
            </widget>
           </item>
@@ -2861,7 +2858,7 @@ color: white;</string>
              <double>0.000010000000000</double>
             </property>
             <property name="value">
-             <double>0.010000000000000</double>
+             <double>0.100000000000000</double>
             </property>
            </widget>
           </item>
@@ -3265,7 +3262,7 @@ color: white;</string>
              <number>500</number>
             </property>
             <property name="value">
-             <number>350</number>
+             <number>280</number>
             </property>
            </widget>
           </item>

@@ -99,9 +99,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
     On_spinPressureKi_editingFinihed();
     On_spinPressureKd_editingFinihed();
     On_spinPressureMaxIntegral_editingFinished();
-
-    // TEMPORARILY HIDDEN
-    _ui->tabWidget->removeTab(3);
 }
 
 MainWindow::~MainWindow(){
@@ -184,8 +181,9 @@ void MainWindow::OrderRods(double rodPosition, double coreTemp){
     _ui->lcdPID_TempD->display(_rodPID.GetD());
 }
 
-void MainWindow::OrderCorePump(){
-    int newflow = qRound(((double)_corePump) + _energyPID.Calculate(_requiredPower-_generatedPower));
+void MainWindow::OrderCorePump(double pump, double generated, double required){
+    double pidResult = _energyPID.Calculate(required-generated);
+    double newflow = pump+pidResult;
 
     if(newflow < _ui->spinCorePumpMin->value()){
         newflow = _ui->spinCorePumpMin->value();
@@ -195,9 +193,8 @@ void MainWindow::OrderCorePump(){
         _energyPID.ResetSum();
     }
 
-    if(newflow != _corePump){
+    if(newflow != pump){
         QString newflowstr = QString::number(newflow);
-        _corePump = newflow;
 
         PostRequest("COOLANT_CORE_CIRCULATION_PUMP_0_ORDERED_SPEED", newflowstr);
         PostRequest("COOLANT_CORE_CIRCULATION_PUMP_1_ORDERED_SPEED", newflowstr);
@@ -373,19 +370,20 @@ void MainWindow::StartController(){
     connect(_netManager, &QNetworkAccessManager::finished, this, &MainWindow::ReplyReceived);
     ConsoleMessage("Controller started");
     //ConsoleMessage("PAUSING THE GAME WILL ACCUMULATE THE ERROR. RESET THE CONTROLLER BEFORE RESUME!", ConsoleMessageType::Warning);
-    switch(_lastGameSpeed){
-    case 1:
-        emit TimerStart(_ui->spinPeriod->value());
-        break;
-    case 2:
-        emit TimerStart(_ui->spinPeriod->value()/_TIMERDIVIDER_X2);
-        break;
-    case 4:
-        emit TimerStart(_ui->spinPeriod->value()/_TIMERDIVIDER_X3);
-        break;
-    default:
-        break;
-    }
+    emit TimerStart(_ui->spinPeriod->value());
+    // switch(_lastGameSpeed){
+    // case 1:
+    //     emit TimerStart(_ui->spinPeriod->value());
+    //     break;
+    // case 2:
+    //     emit TimerStart(_ui->spinPeriod->value()/_TIMERDIVIDER_X2);
+    //     break;
+    // case 4:
+    //     emit TimerStart(_ui->spinPeriod->value()/_TIMERDIVIDER_X3);
+    //     break;
+    // default:
+    //     break;
+    // }
 }
 
 void MainWindow::StopController(){
@@ -637,7 +635,7 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
     }
 
     QJsonObject json = QJsonDocument::fromJson(reply->readAll()).object()["values"].toObject();
-    double actuator, sensor;
+    double actuator, sensor, sensor2;
 
     _ui->labelTime->setText(json["TIME"].toString());
 
@@ -681,8 +679,8 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
 
     if(_ui->checkEnableSteam->isChecked()){
         if(json["STEAM_GEN_0_STATUS"].toInt() ==2){
-            sensor = json["COOLANT_SEC_CIRCULATION_PUMP_0_SPEED"].toDouble();
-            actuator = json["COOLANT_SEC_0_LIQUID_VOLUME"].toDouble();
+            actuator = json["COOLANT_SEC_CIRCULATION_PUMP_0_SPEED"].toDouble();
+            sensor = json["COOLANT_SEC_0_LIQUID_VOLUME"].toDouble()/1000.0;
             _ui->lcd_L1_Steam->display(json["STEAM_GEN_0_OUTLET"].toDouble());
             _ui->lcd_L1_Coolant->display(actuator);
             _ui->lcd_L1_Coolant->display(sensor);
@@ -691,7 +689,7 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
 
         if(json["STEAM_GEN_1_STATUS"].toInt() ==2){
             actuator = json["COOLANT_SEC_CIRCULATION_PUMP_1_SPEED"].toDouble();
-            sensor = json["COOLANT_SEC_1_LIQUID_VOLUME"].toDouble();
+            sensor = json["COOLANT_SEC_1_LIQUID_VOLUME"].toDouble()/1000.0;
             _ui->lcd_L2_Steam->display(json["STEAM_GEN_1_OUTLET"].toDouble());
             _ui->lcd_L2_Coolant->display(actuator);
             _ui->lcd_L2_Coolant->display(sensor);
@@ -700,12 +698,25 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
 
         if(json["STEAM_GEN_2_STATUS"].toInt() ==2){
             actuator = json["COOLANT_SEC_CIRCULATION_PUMP_2_SPEED"].toDouble();
-            sensor = json["COOLANT_SEC_2_LIQUID_VOLUME"].toDouble();
+            sensor = json["COOLANT_SEC_2_LIQUID_VOLUME"].toDouble()/1000.0;
             _ui->lcd_L3_Steam->display(json["STEAM_GEN_2_OUTLET"].toDouble());
             _ui->lcd_L3_Valve->display(actuator);
             _ui->lcd_L3_Coolant->display(sensor);
             OrderSteamFlow(2, actuator, sensor);
         }
+    }
+
+    if(_ui->checkEnableEnergyPID->isChecked()){
+        actuator = json["COOLANT_CORE_FLOW_ORDERED_SPEED"].toDouble();
+        sensor = json["POWER_DEMAND_MW"].toDouble();
+        sensor2 = json["GENERATOR_0_KW"].toDouble();
+        sensor2 += json["GENERATOR_1_KW"].toDouble();
+        sensor2 += json["GENERATOR_2_KW"].toDouble();
+        sensor2 /= 1000.0;
+        _ui->lcdGenPower->display(sensor2);
+        _ui->lcdReqPower->display(sensor);
+        _ui->lcdCorePump->display(actuator);
+        OrderCorePump(actuator, sensor2, sensor);
     }
 
     reply->deleteLater();
