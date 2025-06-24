@@ -101,8 +101,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
     On_spinPressureMaxIntegral_editingFinished();
 
     // TEMPORARILY HIDDEN
-    _ui->tabWidget->removeTab(1);
-    _ui->tabWidget->removeTab(2);
+    _ui->tabWidget->removeTab(3);
 }
 
 MainWindow::~MainWindow(){
