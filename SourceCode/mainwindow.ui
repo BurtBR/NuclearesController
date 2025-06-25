@@ -177,7 +177,7 @@ color: white;</string>
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="tabOptions">
        <attribute name="title">
@@ -209,7 +209,7 @@ color: white;</string>
           <item>
            <widget class="QLabel" name="label_15">
             <property name="text">
-             <string>Data probe period [ms]:</string>
+             <string>Controller sampling period [ms]:</string>
             </property>
            </widget>
           </item>

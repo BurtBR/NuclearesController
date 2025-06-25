@@ -7,49 +7,54 @@
 #include <QScrollBar>
 #include "workerdatacollections.h"
 
+const QString MainWindow::_settingsFilename = "AppSettings.ini";
+
+const QMap<MainWindow::ConfigName, QString> MainWindow::_configNames = {
+    {ConfigName::Ip, "General/Ip"},
+    {ConfigName::SamplingPeriod, "General/SamplingPeriod"},
+    {ConfigName::SteamGenFlowMin, "SteamGenerator/SteamGenFlowMin"},
+    {ConfigName::SteamGenFlowMax, "SteamGenerator/SteamGenFlowMax"},
+    {ConfigName::SteamGenKp, "SteamGenerator/SteamGenKp"},
+    {ConfigName::SteamGenKi, "SteamGenerator/SteamGenKi"},
+    {ConfigName::SteamGenKd, "SteamGenerator/SteamGenKd"},
+    {ConfigName::SteamGenIntegralMax, "SteamGenerator/SteamGenIntegralMax"},
+    {ConfigName::SteamGenVolumeTarget, "SteamGenerator/SteamGenVolumeTarget"},
+    {ConfigName::SteamGenEnabled, "SteamGenerator/SteamGenEnabled"},
+    {ConfigName::SteamPressureValveMin, "SteamPressure/SteamPressureValveMin"},
+    {ConfigName::SteamPressureValveMax, "SteamPressure/SteamPressureValveMax"},
+    {ConfigName::SteamPressureKp, "SteamPressure/SteamPressureKp"},
+    {ConfigName::SteamPressureKi, "SteamPressure/SteamPressureKi"},
+    {ConfigName::SteamPressureKd, "SteamPressure/SteamPressureKd"},
+    {ConfigName::SteamPressureIntegralMax, "SteamPressure/SteamPressureIntegralMax"},
+    {ConfigName::SteamPressureTarget, "SteamPressure/SteamPressureTarget"},
+    {ConfigName::SteamPressureEnabled, "SteamPressure/SteamPressureEnabled"},
+    {ConfigName::PowerGenFlowMin, "PowerGeneration/PowerGenFlowMin"},
+    {ConfigName::PowerGenFlowMax, "PowerGeneration/PowerGenFlowMax"},
+    {ConfigName::PowerGenKp, "PowerGeneration/PowerGenKp"},
+    {ConfigName::PowerGenKi, "PowerGeneration/PowerGenKi"},
+    {ConfigName::PowerGenKd, "PowerGeneration/PowerGenKd"},
+    {ConfigName::PowerGenIntegralMax, "PowerGeneration/PowerGenIntegralMax"},
+    {ConfigName::PowerGenEnabled, "PowerGeneration/PowerGenEnabled"},
+    {ConfigName::CoreTempRodMin, "CoreTemperature/CoreTempRodMin"},
+    {ConfigName::CoreTempRodMax, "CoreTemperature/CoreTempRodMax"},
+    {ConfigName::CoreTempKp, "CoreTemperature/CoreTempKp"},
+    {ConfigName::CoreTempKi, "CoreTemperature/CoreTempKi"},
+    {ConfigName::CoreTempKd, "CoreTemperature/CoreTempKd"},
+    {ConfigName::CoreTempIntegralMax, "CoreTemperature/CoreTempIntegralMax"},
+    {ConfigName::CoreTempTarget, "CoreTemperature/CoreTempTarget"},
+    {ConfigName::CoreTempEnabled, "CoreTemperature/CoreTempEnabled"}
+} ;
+
 #define _TIMERDIVIDER_X2 2
 #define _TIMERDIVIDER_X3 3.529411764
 
-const QMap<QString, MainWindow::NuclearVariable> MainWindow::_variablesNames = {
-    {"REALCURRENTTIME", REALCURRENTTIME},
-    {"TIME", TIME},
-    {"CORE_TEMP", CORE_TEMP},
-    {"CORE_STATE_CRITICALITY", CORE_STATE_CRITICALITY},
-    {"CORE_IODINE_CUMULATIVE", CORE_IODINE_CUMULATIVE},
-    {"CORE_XENON_CUMULATIVE", CORE_XENON_CUMULATIVE},
-    {"COOLANT_SEC_0_VOLUME", COOLANT_SEC_0_VOLUME},
-    {"COOLANT_SEC_1_VOLUME", COOLANT_SEC_1_VOLUME},
-    {"COOLANT_SEC_2_VOLUME", COOLANT_SEC_2_VOLUME},
-    {"STEAM_GEN_0_OUTLET", STEAM_GEN_0_OUTLET},
-    {"STEAM_GEN_1_OUTLET", STEAM_GEN_1_OUTLET},
-    {"STEAM_GEN_2_OUTLET", STEAM_GEN_2_OUTLET},
-    {"COOLANT_SEC_CIRCULATION_PUMP_0_SPEED", COOLANT_SEC_CIRCULATION_PUMP_0_SPEED},
-    {"COOLANT_SEC_CIRCULATION_PUMP_1_SPEED", COOLANT_SEC_CIRCULATION_PUMP_1_SPEED},
-    {"COOLANT_SEC_CIRCULATION_PUMP_2_SPEED", COOLANT_SEC_CIRCULATION_PUMP_2_SPEED},
-    {"COOLANT_SEC_CIRCULATION_PUMP_0_ORDERED_SPEED", COOLANT_SEC_CIRCULATION_PUMP_0_ORDERED_SPEED},
-    {"COOLANT_SEC_CIRCULATION_PUMP_1_ORDERED_SPEED", COOLANT_SEC_CIRCULATION_PUMP_1_ORDERED_SPEED},
-    {"COOLANT_SEC_CIRCULATION_PUMP_2_ORDERED_SPEED", COOLANT_SEC_CIRCULATION_PUMP_2_ORDERED_SPEED},
-    {"POWER_DEMAND_MW", POWER_DEMAND_MW},
-    {"COOLANT_CORE_FLOW_SPEED", COOLANT_CORE_FLOW_SPEED},
-    {"COOLANT_CORE_FLOW_ORDERED_SPEED", COOLANT_CORE_FLOW_ORDERED_SPEED},
-    {"GENERATOR_0_KW", GENERATOR_0_KW},
-    {"GENERATOR_1_KW", GENERATOR_1_KW},
-    {"GENERATOR_2_KW", GENERATOR_2_KW},
-    {"GAME_SIM_SPEED", GAME_SIM_SPEED},
-    {"RODS_POS_ACTUAL", RODS_POS_ACTUAL},
-    {"RODS_POS_ORDERED", RODS_POS_ORDERED},
-    {"ROD_BANK_POS_0_ORDERED", ROD_BANK_POS_0_ORDERED},
-    {"STEAM_TURBINE_0_PRESSURE", STEAM_TURBINE_0_PRESSURE},
-    {"STEAM_TURBINE_1_PRESSURE", STEAM_TURBINE_1_PRESSURE},
-    {"STEAM_TURBINE_2_PRESSURE", STEAM_TURBINE_2_PRESSURE},
-    {"STEAM_TURBINE_0_TEMPERATURE", STEAM_TURBINE_0_TEMPERATURE},
-    {"STEAM_TURBINE_1_TEMPERATURE", STEAM_TURBINE_1_TEMPERATURE},
-    {"STEAM_TURBINE_2_TEMPERATURE", STEAM_TURBINE_2_TEMPERATURE},
-    {"WEBSERVER_BATCH_GET", WEBSERVER_BATCH_GET}
-};
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainWindow){
     _ui->setupUi(this);
+
+    // Temporarily hidden
+    _ui->checkWorkX1->hide();
+    _ui->checkWorkX2->hide();
+    _ui->checkWorkX3->hide();
 
     _netManager = new QNetworkAccessManager(this);
 
@@ -61,6 +66,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 
     connect(_ui->buttonStart, &QPushButton::clicked, this, &MainWindow::On_buttonStart_Clicked);
     connect(_ui->buttonStartDataCollection, &QPushButton::clicked, this, &MainWindow::On_buttonStartDataCollection_Clicked);
+
+    connect(_ui->spinPeriod, &QSpinBox::editingFinished, this, &MainWindow::On_spinPeriod_editingFinished);
 
     connect(_ui->spinRodKp, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinRodKp_editingFinished);
     connect(_ui->spinRodKi, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinRodKi_editingFinished);
@@ -99,6 +106,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
     On_spinPressureKi_editingFinihed();
     On_spinPressureKd_editingFinihed();
     On_spinPressureMaxIntegral_editingFinished();
+
+    GetConfigs();
 }
 
 MainWindow::~MainWindow(){
@@ -118,6 +127,9 @@ MainWindow::~MainWindow(){
         delete _timer;
         _timer = nullptr;
     }
+
+
+    StoreConfigs();
 
     delete _ui;
 }
@@ -407,6 +419,93 @@ void MainWindow::StopController(){
     SetPressureButtonRed(0);
     SetPressureButtonRed(1);
     SetPressureButtonRed(2);
+}
+
+void MainWindow::GetConfigs(){
+    QSettings settings = QSettings(_settingsFilename, QSettings::Format::IniFormat);
+
+    if(settings.value(_configNames[ConfigName::Ip]).isNull())
+        return;
+
+    _ui->lineIP->setText(settings.value(_configNames[ConfigName::Ip]).toString());
+    _ui->spinPeriod->setValue(settings.value(_configNames[ConfigName::SamplingPeriod]).toInt());
+
+    _ui->spinSteamFlowMin->setValue(settings.value(_configNames[ConfigName::SteamGenFlowMin]).toDouble());
+    _ui->spinSteamFlowMax->setValue(settings.value(_configNames[ConfigName::SteamGenFlowMax]).toDouble());
+    _ui->spinSteamKp->setValue(settings.value(_configNames[ConfigName::SteamGenKp]).toDouble());
+    _ui->spinSteamKi->setValue(settings.value(_configNames[ConfigName::SteamGenKi]).toDouble());
+    _ui->spinSteamKd->setValue(settings.value(_configNames[ConfigName::SteamGenKd]).toDouble());
+    _ui->spinIntegralMaximumGen->setValue(settings.value(_configNames[ConfigName::SteamGenIntegralMax]).toDouble());
+    _ui->spinGenVolumeTarget->setValue(settings.value(_configNames[ConfigName::SteamGenVolumeTarget]).toDouble());
+    _ui->checkEnableSteam->setChecked(settings.value(_configNames[ConfigName::SteamGenEnabled]).toBool());
+
+    _ui->spinPressureValveMin->setValue(settings.value(_configNames[ConfigName::SteamPressureValveMin]).toDouble());
+    _ui->spinPressureValveMax->setValue(settings.value(_configNames[ConfigName::SteamPressureValveMax]).toDouble());
+    _ui->spinPressureKp->setValue(settings.value(_configNames[ConfigName::SteamPressureKp]).toDouble());
+    _ui->spinPressureKi->setValue(settings.value(_configNames[ConfigName::SteamPressureKi]).toDouble());
+    _ui->spinPressureKd->setValue(settings.value(_configNames[ConfigName::SteamPressureKd]).toDouble());
+    _ui->spinPressureMaxIntegral->setValue(settings.value(_configNames[ConfigName::SteamPressureIntegralMax]).toDouble());
+    _ui->spinPressureTarget->setValue(settings.value(_configNames[ConfigName::SteamPressureTarget]).toDouble());
+    _ui->checkEnablePressureController->setChecked(settings.value(_configNames[ConfigName::SteamPressureEnabled]).toBool());
+
+    _ui->spinCorePumpMin->setValue(settings.value(_configNames[ConfigName::PowerGenFlowMin]).toDouble());
+    _ui->spinCorePumpMax->setValue(settings.value(_configNames[ConfigName::PowerGenFlowMax]).toDouble());
+    _ui->spinEnergyKp->setValue(settings.value(_configNames[ConfigName::PowerGenKp]).toDouble());
+    _ui->spinEnergyKi->setValue(settings.value(_configNames[ConfigName::PowerGenKi]).toDouble());
+    _ui->spinEnergyKd->setValue(settings.value(_configNames[ConfigName::PowerGenKd]).toDouble());
+    _ui->spinIntegralMaximumCorePump->setValue(settings.value(_configNames[ConfigName::PowerGenIntegralMax]).toDouble());
+    _ui->checkEnableEnergyPID->setChecked(settings.value(_configNames[ConfigName::PowerGenEnabled]).toBool());
+
+    _ui->spinRodMin->setValue(settings.value(_configNames[ConfigName::CoreTempRodMin]).toDouble());
+    _ui->spinRodMax->setValue(settings.value(_configNames[ConfigName::CoreTempRodMax]).toDouble());
+    _ui->spinRodKp->setValue(settings.value(_configNames[ConfigName::CoreTempKp]).toDouble());
+    _ui->spinRodKi->setValue(settings.value(_configNames[ConfigName::CoreTempKi]).toDouble());
+    _ui->spinRodKd->setValue(settings.value(_configNames[ConfigName::CoreTempKd]).toDouble());
+    _ui->spinIntegralMaximumRods->setValue(settings.value(_configNames[ConfigName::CoreTempIntegralMax]).toDouble());
+    _ui->spinTemperatureTarget->setValue(settings.value(_configNames[ConfigName::CoreTempTarget]).toDouble());
+    _ui->checkEnableRodControl->setChecked(settings.value(_configNames[ConfigName::CoreTempEnabled]).toBool());
+}
+
+void MainWindow::StoreConfigs(){
+    QSettings settings = QSettings(_settingsFilename, QSettings::Format::IniFormat);
+
+    settings.setValue(_configNames[ConfigName::Ip], _ui->lineIP->text());
+    settings.setValue(_configNames[ConfigName::SamplingPeriod], _ui->spinPeriod->value());
+
+    settings.setValue(_configNames[ConfigName::SteamGenFlowMin], _ui->spinSteamFlowMin->value());
+    settings.setValue(_configNames[ConfigName::SteamGenFlowMax], _ui->spinSteamFlowMax->value());
+    settings.setValue(_configNames[ConfigName::SteamGenKp], _ui->spinSteamKp->value());
+    settings.setValue(_configNames[ConfigName::SteamGenKi], _ui->spinSteamKi->value());
+    settings.setValue(_configNames[ConfigName::SteamGenKd], _ui->spinSteamKd->value());
+    settings.setValue(_configNames[ConfigName::SteamGenIntegralMax], _ui->spinIntegralMaximumGen->value());
+    settings.setValue(_configNames[ConfigName::SteamGenVolumeTarget], _ui->spinGenVolumeTarget->value());
+    settings.setValue(_configNames[ConfigName::SteamGenEnabled], _ui->checkEnableSteam->isChecked());
+
+    settings.setValue(_configNames[ConfigName::SteamPressureValveMin], _ui->spinPressureValveMin->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureValveMax], _ui->spinPressureValveMax->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureKp], _ui->spinPressureKp->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureKi], _ui->spinPressureKi->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureKd], _ui->spinPressureKd->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureIntegralMax], _ui->spinPressureMaxIntegral->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureTarget], _ui->spinPressureTarget->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureEnabled], _ui->checkEnablePressureController->isChecked());
+
+    settings.setValue(_configNames[ConfigName::PowerGenFlowMin], _ui->spinCorePumpMin->value());
+    settings.setValue(_configNames[ConfigName::PowerGenFlowMax], _ui->spinCorePumpMax->value());
+    settings.setValue(_configNames[ConfigName::PowerGenKp], _ui->spinEnergyKp->value());
+    settings.setValue(_configNames[ConfigName::PowerGenKi], _ui->spinEnergyKi->value());
+    settings.setValue(_configNames[ConfigName::PowerGenKd], _ui->spinEnergyKd->value());
+    settings.setValue(_configNames[ConfigName::PowerGenIntegralMax], _ui->spinIntegralMaximumCorePump->value());
+    settings.setValue(_configNames[ConfigName::PowerGenEnabled], _ui->checkEnableEnergyPID->isChecked());
+
+    settings.setValue(_configNames[ConfigName::CoreTempRodMin], _ui->spinRodMin->value());
+    settings.setValue(_configNames[ConfigName::CoreTempRodMax], _ui->spinRodMax->value());
+    settings.setValue(_configNames[ConfigName::CoreTempKp], _ui->spinRodKp->value());
+    settings.setValue(_configNames[ConfigName::CoreTempKi], _ui->spinRodKi->value());
+    settings.setValue(_configNames[ConfigName::CoreTempKd], _ui->spinRodKd->value());
+    settings.setValue(_configNames[ConfigName::CoreTempIntegralMax], _ui->spinIntegralMaximumRods->value());
+    settings.setValue(_configNames[ConfigName::CoreTempTarget], _ui->spinTemperatureTarget->value());
+    settings.setValue(_configNames[ConfigName::CoreTempEnabled], _ui->checkEnableRodControl->isChecked());
 }
 
 void MainWindow::PostRequest(QString variable, QString value){

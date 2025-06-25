@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QVector>
 #include <QThread>
+#include <QSettings>
 
 #include "pidcontroller.h"
 
@@ -26,51 +27,48 @@ public:
         Warning
     };
 
-    enum NuclearVariable{
-        REALCURRENTTIME,
-        TIME,
-        CORE_TEMP,
-        CORE_STATE_CRITICALITY,
-        CORE_IODINE_CUMULATIVE,
-        CORE_XENON_CUMULATIVE,
-        COOLANT_SEC_0_VOLUME,
-        COOLANT_SEC_1_VOLUME,
-        COOLANT_SEC_2_VOLUME,
-        STEAM_GEN_0_OUTLET,
-        STEAM_GEN_1_OUTLET,
-        STEAM_GEN_2_OUTLET,
-        COOLANT_SEC_CIRCULATION_PUMP_0_SPEED,
-        COOLANT_SEC_CIRCULATION_PUMP_1_SPEED,
-        COOLANT_SEC_CIRCULATION_PUMP_2_SPEED,
-        COOLANT_SEC_CIRCULATION_PUMP_0_ORDERED_SPEED,
-        COOLANT_SEC_CIRCULATION_PUMP_1_ORDERED_SPEED,
-        COOLANT_SEC_CIRCULATION_PUMP_2_ORDERED_SPEED,
-        POWER_DEMAND_MW,
-        COOLANT_CORE_FLOW_SPEED,
-        COOLANT_CORE_FLOW_ORDERED_SPEED,
-        GENERATOR_0_KW,
-        GENERATOR_1_KW,
-        GENERATOR_2_KW,
-        GAME_SIM_SPEED,
-        RODS_POS_ACTUAL,
-        RODS_POS_ORDERED,
-        ROD_BANK_POS_0_ORDERED,
-        STEAM_TURBINE_0_PRESSURE,
-        STEAM_TURBINE_1_PRESSURE,
-        STEAM_TURBINE_2_PRESSURE,
-        STEAM_TURBINE_0_TEMPERATURE,
-        STEAM_TURBINE_1_TEMPERATURE,
-        STEAM_TURBINE_2_TEMPERATURE,
-        WEBSERVER_BATCH_GET
-    };
-
-    static const QMap<QString,NuclearVariable> _variablesNames;
-
 private:
+    enum class ConfigName{
+        Ip,
+        SamplingPeriod,
+        SteamGenFlowMin,
+        SteamGenFlowMax,
+        SteamGenKp,
+        SteamGenKi,
+        SteamGenKd,
+        SteamGenIntegralMax,
+        SteamGenVolumeTarget,
+        SteamGenEnabled,
+        SteamPressureValveMin,
+        SteamPressureValveMax,
+        SteamPressureKp,
+        SteamPressureKi,
+        SteamPressureKd,
+        SteamPressureIntegralMax,
+        SteamPressureTarget,
+        SteamPressureEnabled,
+        PowerGenFlowMin,
+        PowerGenFlowMax,
+        PowerGenKp,
+        PowerGenKi,
+        PowerGenKd,
+        PowerGenIntegralMax,
+        PowerGenEnabled,
+        CoreTempRodMin,
+        CoreTempRodMax,
+        CoreTempKp,
+        CoreTempKi,
+        CoreTempKd,
+        CoreTempIntegralMax,
+        CoreTempTarget,
+        CoreTempEnabled
+    };
+    static const QString _settingsFilename;
     Ui::MainWindow *_ui;
     QNetworkAccessManager *_netManager = nullptr;
     QTimer *_timer = nullptr;
     QThread *_threadDataCollection = nullptr;
+    static const QMap<ConfigName,QString> _configNames;
 
     PIDController _energyPID = PIDController(0 ,0 ,0 , 0.5), _rodPID = PIDController(0, 0, 0, 0.1);
 
@@ -93,6 +91,8 @@ private:
     void SetCoreTemperatureButtonGreen();
     void StartController();
     void StopController();
+    void GetConfigs();
+    void StoreConfigs();
 
     void PostRequest(QString variable, QString value);
     void GetRequest(QString variable);
