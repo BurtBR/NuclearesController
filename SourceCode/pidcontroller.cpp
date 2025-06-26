@@ -3,19 +3,26 @@
 //QDEBUG TEMP
 #include <QDebug>
 
-PIDController::PIDController(double Kp, double Ki, double Kd, double integralLimit) {
+PIDController::PIDController(double Kp, double Ki, double Kd, double integralLimit, double initCommand, bool initialized) {
     SetKp(Kp);
     SetKi(Ki);
     SetKd(Kd);
     SetIntegralLimit(integralLimit);
+    if(initialized)
+        SetInitValue(initCommand);
+    else
+        _lastCommand = initCommand;
 }
 
 double PIDController::Calculate(double error){
 
-    if(!_init){
-        _init = true;
+    if(!_commandInit)
+        return _lastCommand;
+
+    if(!_sumInit){
+        _sumInit = true;
         _lastError = error;
-        return 0.0;
+        return _lastCommand;
     }
 
     double de = error - _lastError;
@@ -45,20 +52,27 @@ double PIDController::Calculate(double error){
         }
     }
 
-    return (_P + _I + _D);
+    _lastCommand += (_P + _I + _D);
+    return _lastCommand;
+}
+
+void PIDController::SetInitValue(double value){
+    _lastCommand = value;
+    _commandInit = true;
 }
 
 void PIDController::Reset(){
-    _lastError = 0;
-    _sumError = 0;
-    _init = false;
-    _P = 0;
-    _I = 0;
-    _D = 0;
+    _lastError = 0.0;
+    _sumError = 0.0;
+    _sumInit = false;
+    _commandInit = false;
+    _P = 0.0;
+    _I = 0.0;
+    _D = 0.0;
 }
 
 void PIDController::ResetSum(){
-    _sumError = 0;
+    _sumError = 0.0;
 }
 
 void PIDController::SetIntegralLimit(double value){
@@ -103,4 +117,8 @@ double PIDController::GetI(){
 
 double PIDController::GetD(){
     return _D;
+}
+
+bool PIDController::IsInitialized() const{
+    return _commandInit;
 }

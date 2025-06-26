@@ -78,7 +78,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
     On_spinRodKd_editingFinished();
     On_spinIntegralMaximumRods_editingFinished();
 
-
     connect(_ui->spinSteamKd, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinSteamKd_editingFinished);
     connect(_ui->spinSteamKi, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinSteamKi_editingFinished);
     connect(_ui->spinSteamKp, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinSteamKp_editingFinished);
@@ -172,14 +171,15 @@ void MainWindow::ConsoleMessage(QString msg, ConsoleMessageType type){
 }
 
 void MainWindow::OrderRods(double rodPosition, double coreTemp){
-    double pidResult = _rodPID.Calculate(coreTemp - _ui->spinTemperatureTarget->value());
-    double newHeight = (rodPosition + pidResult);
+    double newHeight = _rodPID.Calculate(coreTemp - _ui->spinTemperatureTarget->value());
 
     if(newHeight > _ui->spinRodMax->value()){
         newHeight = _ui->spinRodMax->value();
+        _rodPID.SetInitValue(newHeight);
         _rodPID.ResetSum();
     }else if(newHeight < _ui->spinRodMin->value()){
         newHeight = _ui->spinRodMin->value();
+        _rodPID.SetInitValue(newHeight);
         _rodPID.ResetSum();
     }
 
@@ -194,14 +194,15 @@ void MainWindow::OrderRods(double rodPosition, double coreTemp){
 }
 
 void MainWindow::OrderCorePump(double pump, double generated, double required){
-    double pidResult = _energyPID.Calculate(required-generated);
-    double newflow = pump+pidResult;
+    double newflow = _energyPID.Calculate(required-generated);
 
     if(newflow < _ui->spinCorePumpMin->value()){
         newflow = _ui->spinCorePumpMin->value();
+        _energyPID.SetInitValue(newflow);
         _energyPID.ResetSum();
     }else if(newflow > _ui->spinCorePumpMax->value()){
         newflow = _ui->spinCorePumpMax->value();
+        _energyPID.SetInitValue(newflow);
         _energyPID.ResetSum();
     }
 
@@ -220,14 +221,15 @@ void MainWindow::OrderCorePump(double pump, double generated, double required){
 }
 
 void MainWindow::OrderSteamFlow(int number, double valve, double volume){
-    double pidResult = _steamPID[number].Calculate(_ui->spinGenVolumeTarget->value() - volume);
-    int newflow = valve + pidResult;
+    int newflow = _steamPID[number].Calculate(_ui->spinGenVolumeTarget->value() - volume);
 
     if(newflow < _ui->spinSteamFlowMin->value()){
         newflow = _ui->spinSteamFlowMin->value();
+        _steamPID[number].SetInitValue(newflow);
         _steamPID[number].ResetSum();
     }else if(newflow > _ui->spinSteamFlowMax->value()){
         newflow = _ui->spinSteamFlowMax->value();
+        _steamPID[number].SetInitValue(newflow);
         _steamPID[number].ResetSum();
     }
 
@@ -259,14 +261,15 @@ void MainWindow::OrderSteamFlow(int number, double valve, double volume){
 }
 
 void MainWindow::OrderPressure(int number, double valve, double pressure){
-    double pidResult = _pressurePID[number].Calculate(pressure - _ui->spinPressureTarget->value());
-    double newPosition = valve + pidResult;
+    double newPosition = _pressurePID[number].Calculate(pressure - _ui->spinPressureTarget->value());
 
     if(newPosition > _ui->spinPressureValveMax->value()){
         newPosition = _ui->spinPressureValveMax->value();
+        _pressurePID[number].SetInitValue(newPosition);
         _pressurePID[number].ResetSum();
     }else if(newPosition < _ui->spinPressureValveMin->value()){
         newPosition = _ui->spinPressureValveMin->value();
+        _pressurePID[number].SetInitValue(newPosition);
         _pressurePID[number].ResetSum();
     }
 
@@ -381,21 +384,8 @@ void MainWindow::StartController(){
     _ui->buttonStart->setText("Stop");
     connect(_netManager, &QNetworkAccessManager::finished, this, &MainWindow::ReplyReceived);
     ConsoleMessage("Controller started");
-    //ConsoleMessage("PAUSING THE GAME WILL ACCUMULATE THE ERROR. RESET THE CONTROLLER BEFORE RESUME!", ConsoleMessageType::Warning);
+    ConsoleMessage("PAUSING THE GAME WILL ACCUMULATE THE ERROR. RESET THE CONTROLLER BEFORE RESUME!", ConsoleMessageType::Warning);
     emit TimerStart(_ui->spinPeriod->value());
-    // switch(_lastGameSpeed){
-    // case 1:
-    //     emit TimerStart(_ui->spinPeriod->value());
-    //     break;
-    // case 2:
-    //     emit TimerStart(_ui->spinPeriod->value()/_TIMERDIVIDER_X2);
-    //     break;
-    // case 4:
-    //     emit TimerStart(_ui->spinPeriod->value()/_TIMERDIVIDER_X3);
-    //     break;
-    // default:
-    //     break;
-    // }
 }
 
 void MainWindow::StopController(){
@@ -744,6 +734,9 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
         actuator = json["RODS_POS_ACTUAL"].toDouble();
         _ui->lcdRodPosition->display(actuator);
         _ui->lcdReactivity->display(json["CORE_STATE_CRITICALITY"].toDouble());
+        if(!_rodPID.IsInitialized()){
+            _rodPID.SetInitValue(actuator);
+        }
         OrderRods(actuator, sensor);
     }
 
@@ -754,6 +747,8 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
             _ui->lcd_L1_Pres_Temp->display(json["STEAM_TURBINE_0_TEMPERATURE"].toDouble());
             _ui->lcd_L1_Pres_Valve->display(actuator);
             _ui->lcd_L1_Pres_Pres->display(sensor);
+            if(!_pressurePID[0].IsInitialized())
+                _pressurePID[0].SetInitValue(actuator);
             OrderPressure(0, actuator, sensor);
         }
 
@@ -763,6 +758,8 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
             _ui->lcd_L2_Pres_Temp->display(json["STEAM_TURBINE_1_TEMPERATURE"].toDouble());
             _ui->lcd_L2_Pres_Valve->display(actuator);
             _ui->lcd_L2_Pres_Pres->display(sensor);
+            if(!_pressurePID[1].IsInitialized())
+                _pressurePID[1].SetInitValue(actuator);
             OrderPressure(1, actuator, sensor);
         }
 
@@ -772,6 +769,8 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
             _ui->lcd_L3_Pres_Temp->display(json["STEAM_TURBINE_2_TEMPERATURE"].toDouble());
             _ui->lcd_L3_Pres_Valve->display(actuator);
             _ui->lcd_L3_Pres_Pres->display(sensor);
+            if(!_pressurePID[2].IsInitialized())
+                _pressurePID[2].SetInitValue(actuator);
             OrderPressure(2, actuator, sensor);
         }
     }
@@ -783,6 +782,8 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
             _ui->lcd_L1_Steam->display(json["STEAM_GEN_0_OUTLET"].toDouble());
             _ui->lcd_L1_Coolant->display(actuator);
             _ui->lcd_L1_Coolant->display(sensor);
+            if(!_steamPID[0].IsInitialized())
+                _steamPID[0].SetInitValue(actuator);
             OrderSteamFlow(0, actuator, sensor);
         }
 
@@ -792,6 +793,8 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
             _ui->lcd_L2_Steam->display(json["STEAM_GEN_1_OUTLET"].toDouble());
             _ui->lcd_L2_Coolant->display(actuator);
             _ui->lcd_L2_Coolant->display(sensor);
+            if(!_steamPID[1].IsInitialized())
+                _steamPID[1].SetInitValue(actuator);
             OrderSteamFlow(1, actuator, sensor);
         }
 
@@ -801,6 +804,8 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
             _ui->lcd_L3_Steam->display(json["STEAM_GEN_2_OUTLET"].toDouble());
             _ui->lcd_L3_Valve->display(actuator);
             _ui->lcd_L3_Coolant->display(sensor);
+            if(!_steamPID[2].IsInitialized())
+                _steamPID[2].SetInitValue(actuator);
             OrderSteamFlow(2, actuator, sensor);
         }
     }
@@ -815,6 +820,8 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
         _ui->lcdGenPower->display(sensor2);
         _ui->lcdReqPower->display(sensor);
         _ui->lcdCorePump->display(actuator);
+        if(!_energyPID.IsInitialized())
+            _energyPID.SetInitValue(actuator);
         OrderCorePump(actuator, sensor2, sensor);
     }
 
