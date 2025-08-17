@@ -3,8 +3,10 @@ clear; close all; clc;
 
 period = 23.4;
 PlotFinalAnalisis([1.2237 -0.12052],[1 -1.2012 0.28657], period);
+return;
 
 PlotControlled("Controlled.csv");
+return;
 
 namostras = 25;
 ordem = 2;
@@ -119,7 +121,7 @@ function PlotFinalAnalisis(num, den, period)
     set(findall(gcf, 'Type', 'Line'),'LineWidth',5);
     set(findall(gcf, 'Type', 'Line'),'MarkerSize',20);
 
-    Z = c2d(S,10)
+    Z = c2d(S,1)
     Gfz = feedback(Z,1);
     pidTuner(Gfz);
 
