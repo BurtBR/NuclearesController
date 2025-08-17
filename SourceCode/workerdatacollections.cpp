@@ -1,5 +1,8 @@
 #include "workerdatacollections.h"
 
+#include <QJsonDocument>
+#include <QJsonObject>
+
 WorkerDataCollections::WorkerDataCollections(QObject *parent) : QObject{parent}{
 
 }
@@ -87,7 +90,7 @@ void WorkerDataCollections::StartCollection(int msec, QString filename, QString 
         return;
     }
 
-    if(_collectedVariables.contains(MainWindow::NuclearVariable::REALCURRENTTIME)){
+    if(_collectedVariables.contains("REALCURRENTTIME")){
         try{
             _elapsedTimer = new QElapsedTimer();
         }catch(...){
@@ -137,13 +140,13 @@ void WorkerDataCollections::StartCollection(int msec, QString filename, QString 
     }
 
     QTextStream out(_file);
-    QMap<MainWindow::NuclearVariable, QByteArray>::Iterator itr = _collectedVariables.begin();
+    QMap<QString, QString>::Iterator itr = _collectedVariables.begin();
 
-    out << MainWindow::_variablesNames.key(itr.key());
+    out << itr.key();
     itr++;
 
     while(itr != _collectedVariables.end()){
-        out << ";" << MainWindow::_variablesNames.key(itr.key());
+        out << ";" << itr.key();
         itr++;
     }
 
@@ -161,8 +164,8 @@ void WorkerDataCollections::StartCollection(int msec, QString filename, QString 
     _timer->start(msec);
 }
 
-void WorkerDataCollections::GetVariable(MainWindow::NuclearVariable variable){
-    _netManager->get(QNetworkRequest(QUrl("http://" + _ip + "/?variable=" + MainWindow::_variablesNames.key(variable))));
+void WorkerDataCollections::GetVariable(QString variable){
+    _netManager->get(QNetworkRequest(QUrl("http://" + _ip + "/?variable=" + variable)));
 }
 
 bool WorkerDataCollections::WriteData(){
@@ -173,7 +176,7 @@ bool WorkerDataCollections::WriteData(){
         return false;
 
     QTextStream out(_file);
-    QMap<MainWindow::NuclearVariable, QByteArray>::Iterator itr = _collectedVariables.begin();
+    QMap<QString, QString>::Iterator itr = _collectedVariables.begin();
 
     out << "\n" << itr.value();
     itr++;
@@ -194,17 +197,7 @@ void WorkerDataCollections::StopCollection(){
 }
 
 void WorkerDataCollections::Timeout(){
-    QMap<MainWindow::NuclearVariable, QByteArray>::Iterator itr = _collectedVariables.begin();
-
-    while(itr != _collectedVariables.end()){
-        if(itr.key() != MainWindow::NuclearVariable::REALCURRENTTIME)
-            GetVariable(itr.key());
-        else {
-            _qtyReceived++;
-            _collectedVariables[MainWindow::NuclearVariable::REALCURRENTTIME] = QString::number(_elapsedTimer->elapsed()).toUtf8();
-        }
-        itr++;
-    }
+    GetVariable("WEBSERVER_BATCH_GET");
 }
 
 void WorkerDataCollections::ServerReply(QNetworkReply *reply){
@@ -215,40 +208,33 @@ void WorkerDataCollections::ServerReply(QNetworkReply *reply){
         return StopCollection();
     }
 
-    QStringList query = reply->url().query().split('=');
-    MainWindow::NuclearVariable variable;
-
-    if(query.size() != 2){
-        reply->deleteLater();
-        return;
-    }else if(!MainWindow::_variablesNames.contains(query.at(1))){
+    if(!reply->size()){
         reply->deleteLater();
         return;
     }
 
-    variable = MainWindow::_variablesNames.value(query.at(1));
+    QJsonObject json = QJsonDocument::fromJson(reply->readAll()).object()["values"].toObject();
+    QMap<QString,QString>::Iterator itr = _collectedVariables.begin();
 
-    if(!_collectedVariables.contains(variable)){
-        reply->deleteLater();
-        return;
+    if(_collectedVariables.contains("REALCURRENTTIME")){
+        _collectedVariables["REALCURRENTTIME"] = QString::number(_elapsedTimer->elapsed());
     }
 
-    _qtyReceived++;
-
-    _collectedVariables[variable] = reply->readAll();
-
-    if(_qtyReceived == _collectedVariables.size()){
-        if(!WriteData())
-            emit Message("Data not stored!", MainWindow::ConsoleMessageType::Error);
-        _qtyReceived = 0;
+    while(itr != _collectedVariables.end()){
+        if(itr.key().compare("REALCURRENTTIME"))
+            *itr = QString::number(json[itr.key()].toDouble());
+        itr++;
     }
+
+    if(!WriteData())
+        emit Message("Data not stored!", MainWindow::ConsoleMessageType::Error);
 
     reply->deleteLater();
 }
 
-void WorkerDataCollections::AddVariable(MainWindow::NuclearVariable variable){
+void WorkerDataCollections::AddVariable(QString variable){
     if(!_file)
-        _collectedVariables.insert(variable, QByteArray());
+        _collectedVariables.insert(variable, QString());
     else
-        emit Message("Variable not inserted: " + MainWindow::_variablesNames.key(variable));
+        emit Message("Variable not inserted: " + variable);
 }

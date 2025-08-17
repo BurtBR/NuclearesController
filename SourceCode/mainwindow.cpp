@@ -2,51 +2,59 @@
 #include "./ui_mainwindow.h"
 
 #include <QDateTime>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QScrollBar>
 #include "workerdatacollections.h"
+
+const QString MainWindow::_settingsFilename = "AppSettings.ini";
+
+const QMap<MainWindow::ConfigName, QString> MainWindow::_configNames = {
+    {ConfigName::Ip, "General/Ip"},
+    {ConfigName::SamplingPeriod, "General/SamplingPeriod"},
+    {ConfigName::SteamGenFlowMin, "SteamGenerator/SteamGenFlowMin"},
+    {ConfigName::SteamGenFlowMax, "SteamGenerator/SteamGenFlowMax"},
+    {ConfigName::SteamGenKp, "SteamGenerator/SteamGenKp"},
+    {ConfigName::SteamGenKi, "SteamGenerator/SteamGenKi"},
+    {ConfigName::SteamGenKd, "SteamGenerator/SteamGenKd"},
+    {ConfigName::SteamGenIntegralMax, "SteamGenerator/SteamGenIntegralMax"},
+    {ConfigName::SteamGenVolumeTarget, "SteamGenerator/SteamGenVolumeTarget"},
+    {ConfigName::SteamGenEnabled, "SteamGenerator/SteamGenEnabled"},
+    {ConfigName::SteamPressureValveMin, "SteamPressure/SteamPressureValveMin"},
+    {ConfigName::SteamPressureValveMax, "SteamPressure/SteamPressureValveMax"},
+    {ConfigName::SteamPressureKp, "SteamPressure/SteamPressureKp"},
+    {ConfigName::SteamPressureKi, "SteamPressure/SteamPressureKi"},
+    {ConfigName::SteamPressureKd, "SteamPressure/SteamPressureKd"},
+    {ConfigName::SteamPressureIntegralMax, "SteamPressure/SteamPressureIntegralMax"},
+    {ConfigName::SteamPressureTarget, "SteamPressure/SteamPressureTarget"},
+    {ConfigName::SteamPressureEnabled, "SteamPressure/SteamPressureEnabled"},
+    {ConfigName::PowerGenFlowMin, "PowerGeneration/PowerGenFlowMin"},
+    {ConfigName::PowerGenFlowMax, "PowerGeneration/PowerGenFlowMax"},
+    {ConfigName::PowerGenKp, "PowerGeneration/PowerGenKp"},
+    {ConfigName::PowerGenKi, "PowerGeneration/PowerGenKi"},
+    {ConfigName::PowerGenKd, "PowerGeneration/PowerGenKd"},
+    {ConfigName::PowerGenIntegralMax, "PowerGeneration/PowerGenIntegralMax"},
+    {ConfigName::PowerGenEnabled, "PowerGeneration/PowerGenEnabled"},
+    {ConfigName::CoreTempRodMin, "CoreTemperature/CoreTempRodMin"},
+    {ConfigName::CoreTempRodMax, "CoreTemperature/CoreTempRodMax"},
+    {ConfigName::CoreTempKp, "CoreTemperature/CoreTempKp"},
+    {ConfigName::CoreTempKi, "CoreTemperature/CoreTempKi"},
+    {ConfigName::CoreTempKd, "CoreTemperature/CoreTempKd"},
+    {ConfigName::CoreTempIntegralMax, "CoreTemperature/CoreTempIntegralMax"},
+    {ConfigName::CoreTempTarget, "CoreTemperature/CoreTempTarget"},
+    {ConfigName::CoreTempEnabled, "CoreTemperature/CoreTempEnabled"}
+} ;
 
 #define _TIMERDIVIDER_X2 2
 #define _TIMERDIVIDER_X3 3.529411764
 
-const QMap<QString, MainWindow::NuclearVariable> MainWindow::_variablesNames = {
-    {"REALCURRENTTIME", REALCURRENTTIME},
-    {"TIME", TIME},
-    {"CORE_TEMP", CORE_TEMP},
-    {"CORE_STATE_CRITICALITY", CORE_STATE_CRITICALITY},
-    {"CORE_IODINE_CUMULATIVE", CORE_IODINE_CUMULATIVE},
-    {"CORE_XENON_CUMULATIVE", CORE_XENON_CUMULATIVE},
-    {"COOLANT_SEC_0_VOLUME", COOLANT_SEC_0_VOLUME},
-    {"COOLANT_SEC_1_VOLUME", COOLANT_SEC_1_VOLUME},
-    {"COOLANT_SEC_2_VOLUME", COOLANT_SEC_2_VOLUME},
-    {"STEAM_GEN_0_OUTLET", STEAM_GEN_0_OUTLET},
-    {"STEAM_GEN_1_OUTLET", STEAM_GEN_1_OUTLET},
-    {"STEAM_GEN_2_OUTLET", STEAM_GEN_2_OUTLET},
-    {"COOLANT_SEC_CIRCULATION_PUMP_0_SPEED", COOLANT_SEC_CIRCULATION_PUMP_0_SPEED},
-    {"COOLANT_SEC_CIRCULATION_PUMP_1_SPEED", COOLANT_SEC_CIRCULATION_PUMP_1_SPEED},
-    {"COOLANT_SEC_CIRCULATION_PUMP_2_SPEED", COOLANT_SEC_CIRCULATION_PUMP_2_SPEED},
-    {"COOLANT_SEC_CIRCULATION_PUMP_0_ORDERED_SPEED", COOLANT_SEC_CIRCULATION_PUMP_0_ORDERED_SPEED},
-    {"COOLANT_SEC_CIRCULATION_PUMP_1_ORDERED_SPEED", COOLANT_SEC_CIRCULATION_PUMP_1_ORDERED_SPEED},
-    {"COOLANT_SEC_CIRCULATION_PUMP_2_ORDERED_SPEED", COOLANT_SEC_CIRCULATION_PUMP_2_ORDERED_SPEED},
-    {"POWER_DEMAND_MW", POWER_DEMAND_MW},
-    {"COOLANT_CORE_FLOW_SPEED", COOLANT_CORE_FLOW_SPEED},
-    {"COOLANT_CORE_FLOW_ORDERED_SPEED", COOLANT_CORE_FLOW_ORDERED_SPEED},
-    {"GENERATOR_0_KW", GENERATOR_0_KW},
-    {"GENERATOR_1_KW", GENERATOR_1_KW},
-    {"GENERATOR_2_KW", GENERATOR_2_KW},
-    {"GAME_SIM_SPEED", GAME_SIM_SPEED},
-    {"RODS_POS_ACTUAL", RODS_POS_ACTUAL},
-    {"RODS_POS_ORDERED", RODS_POS_ORDERED},
-    {"ROD_BANK_POS_0_ORDERED", ROD_BANK_POS_0_ORDERED},
-    {"STEAM_TURBINE_0_PRESSURE", STEAM_TURBINE_0_PRESSURE},
-    {"STEAM_TURBINE_1_PRESSURE", STEAM_TURBINE_1_PRESSURE},
-    {"STEAM_TURBINE_2_PRESSURE", STEAM_TURBINE_2_PRESSURE},
-    {"STEAM_TURBINE_0_TEMPERATURE", STEAM_TURBINE_0_TEMPERATURE},
-    {"STEAM_TURBINE_1_TEMPERATURE", STEAM_TURBINE_1_TEMPERATURE},
-    {"STEAM_TURBINE_2_TEMPERATURE", STEAM_TURBINE_2_TEMPERATURE}
-};
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainWindow){
     _ui->setupUi(this);
+
+    // Temporarily hidden
+    _ui->checkWorkX1->hide();
+    _ui->checkWorkX2->hide();
+    _ui->checkWorkX3->hide();
 
     _netManager = new QNetworkAccessManager(this);
 
@@ -59,6 +67,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
     connect(_ui->buttonStart, &QPushButton::clicked, this, &MainWindow::On_buttonStart_Clicked);
     connect(_ui->buttonStartDataCollection, &QPushButton::clicked, this, &MainWindow::On_buttonStartDataCollection_Clicked);
 
+    connect(_ui->spinPeriod, &QSpinBox::editingFinished, this, &MainWindow::On_spinPeriod_editingFinished);
+
     connect(_ui->spinRodKp, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinRodKp_editingFinished);
     connect(_ui->spinRodKi, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinRodKi_editingFinished);
     connect(_ui->spinRodKd, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinRodKd_editingFinished);
@@ -67,7 +77,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
     On_spinRodKi_editingFinished();
     On_spinRodKd_editingFinished();
     On_spinIntegralMaximumRods_editingFinished();
-
 
     connect(_ui->spinSteamKd, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinSteamKd_editingFinished);
     connect(_ui->spinSteamKi, &QDoubleSpinBox::editingFinished, this, &MainWindow::On_spinSteamKi_editingFinished);
@@ -97,10 +106,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
     On_spinPressureKd_editingFinihed();
     On_spinPressureMaxIntegral_editingFinished();
 
-    // TEMPORARILY HIDDEN
-    _ui->tabWidget->removeTab(1);
-    _ui->tabWidget->removeTab(1);
-    _ui->tabWidget->removeTab(1);
+    GetConfigs();
 }
 
 MainWindow::~MainWindow(){
@@ -120,6 +126,9 @@ MainWindow::~MainWindow(){
         delete _timer;
         _timer = nullptr;
     }
+
+
+    StoreConfigs();
 
     delete _ui;
 }
@@ -161,20 +170,20 @@ void MainWindow::ConsoleMessage(QString msg, ConsoleMessageType type){
     _ui->textConsole->verticalScrollBar()->setValue(_ui->textConsole->verticalScrollBar()->maximum());
 }
 
-void MainWindow::OrderRods(){
-    double pidResult = _rodPID.Calculate(_coreTemp - _ui->spinTemperatureTarget->value());
-    double newHeight = (_rodsActual + pidResult);
+void MainWindow::OrderRods(double rodPosition, double coreTemp){
+    double newHeight = _rodPID.Calculate(coreTemp - _ui->spinTemperatureTarget->value());
 
     if(newHeight > _ui->spinRodMax->value()){
         newHeight = _ui->spinRodMax->value();
+        _rodPID.SetInitValue(newHeight);
         _rodPID.ResetSum();
     }else if(newHeight < _ui->spinRodMin->value()){
         newHeight = _ui->spinRodMin->value();
+        _rodPID.SetInitValue(newHeight);
         _rodPID.ResetSum();
     }
 
-    if(newHeight != _rodsActual){
-        _rodsActual = newHeight;
+    if(newHeight != rodPosition){
         PostRequest("RODS_ALL_POS_ORDERED", QString::number(newHeight));
     }
 
@@ -184,20 +193,21 @@ void MainWindow::OrderRods(){
     _ui->lcdPID_TempD->display(_rodPID.GetD());
 }
 
-void MainWindow::OrderCorePump(){
-    int newflow = qRound(((double)_corePump) + _energyPID.Calculate(_requiredPower-_generatedPower));
+void MainWindow::OrderCorePump(double pump, double generated, double required){
+    double newflow = _energyPID.Calculate(required-generated);
 
     if(newflow < _ui->spinCorePumpMin->value()){
         newflow = _ui->spinCorePumpMin->value();
+        _energyPID.SetInitValue(newflow);
         _energyPID.ResetSum();
     }else if(newflow > _ui->spinCorePumpMax->value()){
         newflow = _ui->spinCorePumpMax->value();
+        _energyPID.SetInitValue(newflow);
         _energyPID.ResetSum();
     }
 
-    if(newflow != _corePump){
+    if(newflow != pump){
         QString newflowstr = QString::number(newflow);
-        _corePump = newflow;
 
         PostRequest("COOLANT_CORE_CIRCULATION_PUMP_0_ORDERED_SPEED", newflowstr);
         PostRequest("COOLANT_CORE_CIRCULATION_PUMP_1_ORDERED_SPEED", newflowstr);
@@ -210,24 +220,20 @@ void MainWindow::OrderCorePump(){
     _ui->lcdPID_PowerD->display(_energyPID.GetD());
 }
 
-void MainWindow::OrderSteamFlow(int number){
-    int newflow;
-    int error = _ui->spinGenVolumeTarget->value()-_coolantVolume[number];
-
-    double command = _steamPID[number].Calculate(error);
-
-    newflow = qRound(command + _secCoolFlow[number]);
+void MainWindow::OrderSteamFlow(int number, double valve, double volume){
+    int newflow = _steamPID[number].Calculate(_ui->spinGenVolumeTarget->value() - volume);
 
     if(newflow < _ui->spinSteamFlowMin->value()){
         newflow = _ui->spinSteamFlowMin->value();
+        _steamPID[number].SetInitValue(newflow);
         _steamPID[number].ResetSum();
     }else if(newflow > _ui->spinSteamFlowMax->value()){
         newflow = _ui->spinSteamFlowMax->value();
+        _steamPID[number].SetInitValue(newflow);
         _steamPID[number].ResetSum();
     }
 
-    if(newflow != _secCoolFlow[number]){
-        _secCoolFlow[number] = newflow;
+    if(newflow != valve){
         PostRequest("COOLANT_SEC_CIRCULATION_PUMP_"+QString::number(number)+"_ORDERED_SPEED", QString::number(newflow));
     }
 
@@ -254,8 +260,44 @@ void MainWindow::OrderSteamFlow(int number){
     }
 }
 
-void MainWindow::OrderPressure(int number){
+void MainWindow::OrderPressure(int number, double valve, double pressure){
+    double newPosition = _pressurePID[number].Calculate(pressure - _ui->spinPressureTarget->value());
 
+    if(newPosition > _ui->spinPressureValveMax->value()){
+        newPosition = _ui->spinPressureValveMax->value();
+        _pressurePID[number].SetInitValue(newPosition);
+        _pressurePID[number].ResetSum();
+    }else if(newPosition < _ui->spinPressureValveMin->value()){
+        newPosition = _ui->spinPressureValveMin->value();
+        _pressurePID[number].SetInitValue(newPosition);
+        _pressurePID[number].ResetSum();
+    }
+
+    if(newPosition != valve){
+        PostRequest("MSCV_" + QString::number(number) + "_OPENING_ORDERED", QString::number(newPosition));
+    }
+
+    SetPressureButtonGreen(number);
+
+    switch(number){
+    case 0:
+        _ui->lcd_L1_Pres_P->display(_pressurePID[number].GetP());
+        _ui->lcd_L1_Pres_I->display(_pressurePID[number].GetI());
+        _ui->lcd_L1_Pres_D->display(_pressurePID[number].GetD());
+        break;
+    case 1:
+        _ui->lcd_L2_Pres_P->display(_pressurePID[number].GetP());
+        _ui->lcd_L2_Pres_I->display(_pressurePID[number].GetI());
+        _ui->lcd_L2_Pres_D->display(_pressurePID[number].GetD());
+        break;
+    case 2:
+        _ui->lcd_L3_Pres_P->display(_pressurePID[number].GetP());
+        _ui->lcd_L3_Pres_I->display(_pressurePID[number].GetI());
+        _ui->lcd_L3_Pres_D->display(_pressurePID[number].GetD());
+        break;
+    default:
+        break;
+    }
 }
 
 void MainWindow::SetSteamButtonRed(int number){
@@ -342,20 +384,8 @@ void MainWindow::StartController(){
     _ui->buttonStart->setText("Stop");
     connect(_netManager, &QNetworkAccessManager::finished, this, &MainWindow::ReplyReceived);
     ConsoleMessage("Controller started");
-    //ConsoleMessage("PAUSING THE GAME WILL ACCUMULATE THE ERROR. RESET THE CONTROLLER BEFORE RESUME!", ConsoleMessageType::Warning);
-    switch(_lastGameSpeed){
-    case 1:
-        emit TimerStart(_ui->spinPeriod->value());
-        break;
-    case 2:
-        emit TimerStart(_ui->spinPeriod->value()/_TIMERDIVIDER_X2);
-        break;
-    case 4:
-        emit TimerStart(_ui->spinPeriod->value()/_TIMERDIVIDER_X3);
-        break;
-    default:
-        break;
-    }
+    ConsoleMessage("PAUSING THE GAME WILL ACCUMULATE THE ERROR. RESET THE CONTROLLER BEFORE RESUME!", ConsoleMessageType::Warning);
+    emit TimerStart(_ui->spinPeriod->value());
 }
 
 void MainWindow::StopController(){
@@ -381,24 +411,91 @@ void MainWindow::StopController(){
     SetPressureButtonRed(2);
 }
 
-void MainWindow::ControlPlant(){
-    if(_ui->checkEnableSteam->isChecked()){
-        GetRequest("STEAM_GEN_0_OUTLET");
-        GetRequest("STEAM_GEN_1_OUTLET");
-        GetRequest("STEAM_GEN_2_OUTLET");
-    }
+void MainWindow::GetConfigs(){
+    QSettings settings = QSettings(_settingsFilename, QSettings::Format::IniFormat);
 
-    if(_ui->checkEnableEnergyPID->isChecked()){
-        GetRequest("POWER_DEMAND_MW");
-    }
+    if(settings.value(_configNames[ConfigName::Ip]).isNull())
+        return;
 
-    if(_ui->checkEnableRodControl->isChecked()){
-        GetRequest("CORE_TEMP");
-    }
+    _ui->lineIP->setText(settings.value(_configNames[ConfigName::Ip]).toString());
+    _ui->spinPeriod->setValue(settings.value(_configNames[ConfigName::SamplingPeriod]).toInt());
 
-    if(_ui->checkEnablePressureController->isChecked()){
-        GetRequest("");
-    }
+    _ui->spinSteamFlowMin->setValue(settings.value(_configNames[ConfigName::SteamGenFlowMin]).toDouble());
+    _ui->spinSteamFlowMax->setValue(settings.value(_configNames[ConfigName::SteamGenFlowMax]).toDouble());
+    _ui->spinSteamKp->setValue(settings.value(_configNames[ConfigName::SteamGenKp]).toDouble());
+    _ui->spinSteamKi->setValue(settings.value(_configNames[ConfigName::SteamGenKi]).toDouble());
+    _ui->spinSteamKd->setValue(settings.value(_configNames[ConfigName::SteamGenKd]).toDouble());
+    _ui->spinIntegralMaximumGen->setValue(settings.value(_configNames[ConfigName::SteamGenIntegralMax]).toDouble());
+    _ui->spinGenVolumeTarget->setValue(settings.value(_configNames[ConfigName::SteamGenVolumeTarget]).toDouble());
+    _ui->checkEnableSteam->setChecked(settings.value(_configNames[ConfigName::SteamGenEnabled]).toBool());
+
+    _ui->spinPressureValveMin->setValue(settings.value(_configNames[ConfigName::SteamPressureValveMin]).toDouble());
+    _ui->spinPressureValveMax->setValue(settings.value(_configNames[ConfigName::SteamPressureValveMax]).toDouble());
+    _ui->spinPressureKp->setValue(settings.value(_configNames[ConfigName::SteamPressureKp]).toDouble());
+    _ui->spinPressureKi->setValue(settings.value(_configNames[ConfigName::SteamPressureKi]).toDouble());
+    _ui->spinPressureKd->setValue(settings.value(_configNames[ConfigName::SteamPressureKd]).toDouble());
+    _ui->spinPressureMaxIntegral->setValue(settings.value(_configNames[ConfigName::SteamPressureIntegralMax]).toDouble());
+    _ui->spinPressureTarget->setValue(settings.value(_configNames[ConfigName::SteamPressureTarget]).toDouble());
+    _ui->checkEnablePressureController->setChecked(settings.value(_configNames[ConfigName::SteamPressureEnabled]).toBool());
+
+    _ui->spinCorePumpMin->setValue(settings.value(_configNames[ConfigName::PowerGenFlowMin]).toDouble());
+    _ui->spinCorePumpMax->setValue(settings.value(_configNames[ConfigName::PowerGenFlowMax]).toDouble());
+    _ui->spinEnergyKp->setValue(settings.value(_configNames[ConfigName::PowerGenKp]).toDouble());
+    _ui->spinEnergyKi->setValue(settings.value(_configNames[ConfigName::PowerGenKi]).toDouble());
+    _ui->spinEnergyKd->setValue(settings.value(_configNames[ConfigName::PowerGenKd]).toDouble());
+    _ui->spinIntegralMaximumCorePump->setValue(settings.value(_configNames[ConfigName::PowerGenIntegralMax]).toDouble());
+    _ui->checkEnableEnergyPID->setChecked(settings.value(_configNames[ConfigName::PowerGenEnabled]).toBool());
+
+    _ui->spinRodMin->setValue(settings.value(_configNames[ConfigName::CoreTempRodMin]).toDouble());
+    _ui->spinRodMax->setValue(settings.value(_configNames[ConfigName::CoreTempRodMax]).toDouble());
+    _ui->spinRodKp->setValue(settings.value(_configNames[ConfigName::CoreTempKp]).toDouble());
+    _ui->spinRodKi->setValue(settings.value(_configNames[ConfigName::CoreTempKi]).toDouble());
+    _ui->spinRodKd->setValue(settings.value(_configNames[ConfigName::CoreTempKd]).toDouble());
+    _ui->spinIntegralMaximumRods->setValue(settings.value(_configNames[ConfigName::CoreTempIntegralMax]).toDouble());
+    _ui->spinTemperatureTarget->setValue(settings.value(_configNames[ConfigName::CoreTempTarget]).toDouble());
+    _ui->checkEnableRodControl->setChecked(settings.value(_configNames[ConfigName::CoreTempEnabled]).toBool());
+}
+
+void MainWindow::StoreConfigs(){
+    QSettings settings = QSettings(_settingsFilename, QSettings::Format::IniFormat);
+
+    settings.setValue(_configNames[ConfigName::Ip], _ui->lineIP->text());
+    settings.setValue(_configNames[ConfigName::SamplingPeriod], _ui->spinPeriod->value());
+
+    settings.setValue(_configNames[ConfigName::SteamGenFlowMin], _ui->spinSteamFlowMin->value());
+    settings.setValue(_configNames[ConfigName::SteamGenFlowMax], _ui->spinSteamFlowMax->value());
+    settings.setValue(_configNames[ConfigName::SteamGenKp], _ui->spinSteamKp->value());
+    settings.setValue(_configNames[ConfigName::SteamGenKi], _ui->spinSteamKi->value());
+    settings.setValue(_configNames[ConfigName::SteamGenKd], _ui->spinSteamKd->value());
+    settings.setValue(_configNames[ConfigName::SteamGenIntegralMax], _ui->spinIntegralMaximumGen->value());
+    settings.setValue(_configNames[ConfigName::SteamGenVolumeTarget], _ui->spinGenVolumeTarget->value());
+    settings.setValue(_configNames[ConfigName::SteamGenEnabled], _ui->checkEnableSteam->isChecked());
+
+    settings.setValue(_configNames[ConfigName::SteamPressureValveMin], _ui->spinPressureValveMin->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureValveMax], _ui->spinPressureValveMax->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureKp], _ui->spinPressureKp->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureKi], _ui->spinPressureKi->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureKd], _ui->spinPressureKd->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureIntegralMax], _ui->spinPressureMaxIntegral->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureTarget], _ui->spinPressureTarget->value());
+    settings.setValue(_configNames[ConfigName::SteamPressureEnabled], _ui->checkEnablePressureController->isChecked());
+
+    settings.setValue(_configNames[ConfigName::PowerGenFlowMin], _ui->spinCorePumpMin->value());
+    settings.setValue(_configNames[ConfigName::PowerGenFlowMax], _ui->spinCorePumpMax->value());
+    settings.setValue(_configNames[ConfigName::PowerGenKp], _ui->spinEnergyKp->value());
+    settings.setValue(_configNames[ConfigName::PowerGenKi], _ui->spinEnergyKi->value());
+    settings.setValue(_configNames[ConfigName::PowerGenKd], _ui->spinEnergyKd->value());
+    settings.setValue(_configNames[ConfigName::PowerGenIntegralMax], _ui->spinIntegralMaximumCorePump->value());
+    settings.setValue(_configNames[ConfigName::PowerGenEnabled], _ui->checkEnableEnergyPID->isChecked());
+
+    settings.setValue(_configNames[ConfigName::CoreTempRodMin], _ui->spinRodMin->value());
+    settings.setValue(_configNames[ConfigName::CoreTempRodMax], _ui->spinRodMax->value());
+    settings.setValue(_configNames[ConfigName::CoreTempKp], _ui->spinRodKp->value());
+    settings.setValue(_configNames[ConfigName::CoreTempKi], _ui->spinRodKi->value());
+    settings.setValue(_configNames[ConfigName::CoreTempKd], _ui->spinRodKd->value());
+    settings.setValue(_configNames[ConfigName::CoreTempIntegralMax], _ui->spinIntegralMaximumRods->value());
+    settings.setValue(_configNames[ConfigName::CoreTempTarget], _ui->spinTemperatureTarget->value());
+    settings.setValue(_configNames[ConfigName::CoreTempEnabled], _ui->checkEnableRodControl->isChecked());
 }
 
 void MainWindow::PostRequest(QString variable, QString value){
@@ -457,22 +554,22 @@ void MainWindow::On_buttonStartDataCollection_Clicked(){
         }
 
         if(_ui->checkCollectRealtime->isChecked())
-            worker->AddVariable(NuclearVariable::REALCURRENTTIME);
+            worker->AddVariable("REALCURRENTTIME");
 
         if(_ui->checkCollectCoreTemperature->isChecked())
-            worker->AddVariable(NuclearVariable::CORE_TEMP);
+            worker->AddVariable("CORE_TEMP");
 
         if(_ui->checkCollectRodsCommanded->isChecked())
-            worker->AddVariable(NuclearVariable::ROD_BANK_POS_0_ORDERED);
+            worker->AddVariable("ROD_BANK_POS_0_ORDERED");
 
         if(_ui->checkCollectRodsPosition->isChecked())
-            worker->AddVariable(NuclearVariable::RODS_POS_ACTUAL);
+            worker->AddVariable("RODS_POS_ACTUAL");
 
         if(_ui->checkCollectCumulativeIodine->isChecked())
-            worker->AddVariable(NuclearVariable::CORE_IODINE_CUMULATIVE);
+            worker->AddVariable("CORE_IODINE_CUMULATIVE");
 
         if(_ui->checkCollectCumulativeXenon->isChecked())
-            worker->AddVariable(NuclearVariable::CORE_XENON_CUMULATIVE);
+            worker->AddVariable("CORE_XENON_CUMULATIVE");
 
         connect(_threadDataCollection, &QThread::finished, worker, &WorkerDataCollections::deleteLater);
 
@@ -621,171 +718,116 @@ void MainWindow::ReplyReceived(QNetworkReply *reply){
         return;
     }
 
-    QStringList query = reply->url().query().split('=');
-
-    if(query.size() != 2){
-        reply->deleteLater();
-        return;
-    }else if(!_variablesNames.contains(query.at(1))){
+    if(!reply->size()){
         reply->deleteLater();
         return;
     }
 
-    switch(_variablesNames[query.at(1)]){
+    QJsonObject json = QJsonDocument::fromJson(reply->readAll()).object()["values"].toObject();
+    double actuator, sensor, sensor2;
 
-    case NuclearVariable::TIME:
-        _ui->labelTime->setText(reply->readAll());
-        GetRequest("GAME_SIM_SPEED");
-        break;
+    _ui->labelTime->setText(json["TIME"].toString());
 
-    case NuclearVariable::GAME_SIM_SPEED:{
-        int gamespeed = reply->readAll().toInt();
+    if(_ui->checkEnableRodControl->isChecked()){
+        sensor = json["CORE_TEMP"].toDouble();
+        _ui->lcdCoreTemp->display(sensor);
+        actuator = json["RODS_POS_ACTUAL"].toDouble();
+        _ui->lcdRodPosition->display(actuator);
+        _ui->lcdReactivity->display(json["CORE_STATE_CRITICALITY"].toDouble());
+        if(!_rodPID.IsInitialized()){
+            _rodPID.SetInitValue(actuator);
+        }
+        OrderRods(actuator, sensor);
+    }
 
-        if(_lastGameSpeed != gamespeed){
-            _lastGameSpeed = gamespeed;
-            switch(_lastGameSpeed){
-            case 1:
-                emit TimerStart(_ui->spinPeriod->value());
-                break;
-            case 2:
-                emit TimerStart(_ui->spinPeriod->value()/_TIMERDIVIDER_X2);
-                break;
-            case 4:
-                emit TimerStart(_ui->spinPeriod->value()/_TIMERDIVIDER_X3);
-                break;
-            default:
-                break;
-            }
+    if(_ui->checkEnablePressureController->isChecked()){
+        if(json["STEAM_GEN_0_STATUS"].toInt() ==2){
+            sensor = json["STEAM_TURBINE_0_PRESSURE"].toDouble();
+            actuator = json["MSCV_0_OPENING_ACTUAL"].toDouble();
+            _ui->lcd_L1_Pres_Temp->display(json["STEAM_TURBINE_0_TEMPERATURE"].toDouble());
+            _ui->lcd_L1_Pres_Valve->display(actuator);
+            _ui->lcd_L1_Pres_Pres->display(sensor);
+            if(!_pressurePID[0].IsInitialized())
+                _pressurePID[0].SetInitValue(actuator);
+            OrderPressure(0, actuator, sensor);
         }
 
-        switch(gamespeed){
-        case 1:
-            if(_ui->checkWorkX1->isChecked()){
-                ControlPlant();
-            }
-            break;
-        case 2:
-            if(_ui->checkWorkX2->isChecked()){
-                ControlPlant();
-            }
-            break;
-        case 4:
-            if(_ui->checkWorkX3->isChecked()){
-                ControlPlant();
-            }
-            break;
-        default:
-            break;
+        if(json["STEAM_GEN_1_STATUS"].toInt() ==2){
+            actuator = json["MSCV_1_OPENING_ACTUAL"].toDouble();
+            sensor = json["STEAM_TURBINE_1_PRESSURE"].toDouble();
+            _ui->lcd_L2_Pres_Temp->display(json["STEAM_TURBINE_1_TEMPERATURE"].toDouble());
+            _ui->lcd_L2_Pres_Valve->display(actuator);
+            _ui->lcd_L2_Pres_Pres->display(sensor);
+            if(!_pressurePID[1].IsInitialized())
+                _pressurePID[1].SetInitValue(actuator);
+            OrderPressure(1, actuator, sensor);
         }
-    }break;
 
-    case NuclearVariable::CORE_TEMP:
-        _coreTemp = reply->readAll().toDouble();
-        _ui->lcdCoreTemp->display(_coreTemp);
-        GetRequest("RODS_POS_ACTUAL");
-        GetRequest("CORE_STATE_CRITICALITY");
-        break;
-    case NuclearVariable::RODS_POS_ACTUAL:
-        _rodsActual = reply->readAll().toDouble();
-        _ui->lcdRodPosition->display(_rodsActual);
-        OrderRods();
-        break;
+        if(json["STEAM_GEN_2_STATUS"].toInt() ==2){
+            actuator = json["MSCV_2_OPENING_ACTUAL"].toDouble();
+            sensor = json["STEAM_TURBINE_2_PRESSURE"].toDouble();
+            _ui->lcd_L3_Pres_Temp->display(json["STEAM_TURBINE_2_TEMPERATURE"].toDouble());
+            _ui->lcd_L3_Pres_Valve->display(actuator);
+            _ui->lcd_L3_Pres_Pres->display(sensor);
+            if(!_pressurePID[2].IsInitialized())
+                _pressurePID[2].SetInitValue(actuator);
+            OrderPressure(2, actuator, sensor);
+        }
+    }
 
-    case NuclearVariable::CORE_STATE_CRITICALITY:
-        _ui->lcdReactivity->display(reply->readAll().toDouble());
-        break;
+    if(_ui->checkEnableSteam->isChecked()){
+        if(json["STEAM_GEN_0_STATUS"].toInt() ==2){
+            actuator = json["COOLANT_SEC_CIRCULATION_PUMP_0_SPEED"].toDouble();
+            sensor = json["COOLANT_SEC_0_LIQUID_VOLUME"].toDouble()/1000.0;
+            _ui->lcd_L1_Steam->display(json["STEAM_GEN_0_OUTLET"].toDouble());
+            _ui->lcd_L1_Coolant->display(actuator);
+            _ui->lcd_L1_Coolant->display(sensor);
+            if(!_steamPID[0].IsInitialized())
+                _steamPID[0].SetInitValue(actuator);
+            OrderSteamFlow(0, actuator, sensor);
+        }
 
-    case NuclearVariable::POWER_DEMAND_MW:
-        _requiredPower = reply->readAll().toDouble();
-        _ui->lcdReqPower->display(_requiredPower);
-        GetRequest("GENERATOR_0_KW");
-        break;
-    case NuclearVariable::GENERATOR_0_KW:
-        _generatedPower = reply->readAll().toDouble()/1000.0;
-        GetRequest("GENERATOR_1_KW");
-        break;
-    case NuclearVariable::GENERATOR_1_KW:
-        _generatedPower += (reply->readAll().toDouble()/1000.0);
-        GetRequest("GENERATOR_2_KW");
-        break;
-    case NuclearVariable::GENERATOR_2_KW:
-        _generatedPower += (reply->readAll().toDouble()/1000.0);
-        GetRequest("COOLANT_CORE_FLOW_SPEED");
-        break;
-    case NuclearVariable::COOLANT_CORE_FLOW_SPEED:
-        _corePump = reply->readAll().toDouble();
-        _ui->lcdGenPower->display(_generatedPower);
-        _ui->lcdCorePump->display(_corePump);
-        OrderCorePump();
-        break;
-    case NuclearVariable::COOLANT_CORE_FLOW_ORDERED_SPEED:
-        break;
+        if(json["STEAM_GEN_1_STATUS"].toInt() ==2){
+            actuator = json["COOLANT_SEC_CIRCULATION_PUMP_1_SPEED"].toDouble();
+            sensor = json["COOLANT_SEC_1_LIQUID_VOLUME"].toDouble()/1000.0;
+            _ui->lcd_L2_Steam->display(json["STEAM_GEN_1_OUTLET"].toDouble());
+            _ui->lcd_L2_Coolant->display(actuator);
+            _ui->lcd_L2_Coolant->display(sensor);
+            if(!_steamPID[1].IsInitialized())
+                _steamPID[1].SetInitValue(actuator);
+            OrderSteamFlow(1, actuator, sensor);
+        }
 
-    case NuclearVariable::STEAM_GEN_0_OUTLET:
-        _steamOutlet[0] = reply->readAll().toFloat();
-        _ui->lcd_L1_Steam->display(_steamOutlet[0]);
-        if(_steamOutlet[0] || _secCoolFlow[0])
-            GetRequest("COOLANT_SEC_CIRCULATION_PUMP_0_SPEED");
-        break;
-    case NuclearVariable::STEAM_GEN_1_OUTLET:
-        _steamOutlet[1] = reply->readAll().toFloat();
-        _ui->lcd_L2_Steam->display(_steamOutlet[1]);
-        if(_steamOutlet[1] || _secCoolFlow[1])
-            GetRequest("COOLANT_SEC_CIRCULATION_PUMP_1_SPEED");
-        break;
-    case NuclearVariable::STEAM_GEN_2_OUTLET:
-        _steamOutlet[2] = reply->readAll().toFloat();
-        _ui->lcd_L3_Steam->display(_steamOutlet[2]);
-        if(_steamOutlet[2] || _secCoolFlow[2])
-            GetRequest("COOLANT_SEC_CIRCULATION_PUMP_2_SPEED");
-        break;
+        if(json["STEAM_GEN_2_STATUS"].toInt() ==2){
+            actuator = json["COOLANT_SEC_CIRCULATION_PUMP_2_SPEED"].toDouble();
+            sensor = json["COOLANT_SEC_2_LIQUID_VOLUME"].toDouble()/1000.0;
+            _ui->lcd_L3_Steam->display(json["STEAM_GEN_2_OUTLET"].toDouble());
+            _ui->lcd_L3_Valve->display(actuator);
+            _ui->lcd_L3_Coolant->display(sensor);
+            if(!_steamPID[2].IsInitialized())
+                _steamPID[2].SetInitValue(actuator);
+            OrderSteamFlow(2, actuator, sensor);
+        }
+    }
 
-
-    case NuclearVariable::COOLANT_SEC_CIRCULATION_PUMP_0_SPEED:
-        _secCoolFlow[0] = reply->readAll().toFloat();
-        _ui->lcd_L1_Valve->display(_secCoolFlow[0]);
-        GetRequest("COOLANT_SEC_0_VOLUME");
-        break;
-    case NuclearVariable::COOLANT_SEC_CIRCULATION_PUMP_1_SPEED:
-        _secCoolFlow[1] = reply->readAll().toFloat();
-        _ui->lcd_L2_Valve->display(_secCoolFlow[1]);
-        GetRequest("COOLANT_SEC_1_VOLUME");
-        break;
-    case NuclearVariable::COOLANT_SEC_CIRCULATION_PUMP_2_SPEED:
-        _secCoolFlow[2] = reply->readAll().toFloat();
-        _ui->lcd_L3_Valve->display(_secCoolFlow[2]);
-        GetRequest("COOLANT_SEC_2_VOLUME");
-        break;
-
-    case NuclearVariable::COOLANT_SEC_0_VOLUME:
-        _coolantVolume[0] = reply->readAll().toFloat();
-        _ui->lcdl_L1_Coolant->display(_coolantVolume[0]);
-        OrderSteamFlow(0);
-        break;
-    case NuclearVariable::COOLANT_SEC_1_VOLUME:
-        _coolantVolume[1] = reply->readAll().toFloat();
-        _ui->lcdl_L2_Coolant->display(_coolantVolume[1]);
-        OrderSteamFlow(1);
-        break;
-    case NuclearVariable::COOLANT_SEC_2_VOLUME:
-        _coolantVolume[2] = reply->readAll().toFloat();
-        _ui->lcdl_L3_Coolant->display(_coolantVolume[2]);
-        OrderSteamFlow(2);
-        break;
-
-    case NuclearVariable::COOLANT_SEC_CIRCULATION_PUMP_0_ORDERED_SPEED:
-        break;
-    case NuclearVariable::COOLANT_SEC_CIRCULATION_PUMP_1_ORDERED_SPEED:
-        break;
-    case NuclearVariable::COOLANT_SEC_CIRCULATION_PUMP_2_ORDERED_SPEED:
-        break;
-    default:
-        break;
+    if(_ui->checkEnableEnergyPID->isChecked()){
+        actuator = json["COOLANT_CORE_FLOW_ORDERED_SPEED"].toDouble();
+        sensor = json["POWER_DEMAND_MW"].toDouble();
+        sensor2 = json["GENERATOR_0_KW"].toDouble();
+        sensor2 += json["GENERATOR_1_KW"].toDouble();
+        sensor2 += json["GENERATOR_2_KW"].toDouble();
+        sensor2 /= 1000.0;
+        _ui->lcdGenPower->display(sensor2);
+        _ui->lcdReqPower->display(sensor);
+        _ui->lcdCorePump->display(actuator);
+        if(!_energyPID.IsInitialized())
+            _energyPID.SetInitValue(actuator);
+        OrderCorePump(actuator, sensor2, sensor);
     }
 
     reply->deleteLater();
 }
 
 void MainWindow::Timeout(){
-    GetRequest("TIME");
+    GetRequest("WEBSERVER_BATCH_GET");
 }

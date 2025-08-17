@@ -17,18 +17,17 @@ private:
     QTimer *_timer = nullptr;
     QElapsedTimer *_elapsedTimer = nullptr;
     QFile *_file = nullptr;
-    QMap<MainWindow::NuclearVariable, QByteArray> _collectedVariables;
+    QMap<QString, QString> _collectedVariables;
     QString _ip;
-    int _qtyReceived = 0;
 
-    void GetVariable(MainWindow::NuclearVariable variable);
+    void GetVariable(QString variable);
     bool WriteData();
 
 public:
     explicit WorkerDataCollections(QObject *parent = nullptr);
     ~WorkerDataCollections();
 
-    void AddVariable(MainWindow::NuclearVariable variable);
+    void AddVariable(QString variable);
 
 private slots:
     void Timeout();
